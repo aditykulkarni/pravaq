@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRAVAQ: Engineering Horological Excellence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .flow-line {
+            position: relative;
+            z-index: 0;
+        }
+        .flow-line::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 2rem;
+            height: 2px;
+            background-color: #665191;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+        .flow-line:last-child::after {
+            display: none;
+        }
+        .kpi-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-[#003f5c]">PRAVAQ</h1>
+            <p class="text-xl md:text-2xl font-light text-[#2f4b7c] mt-2">Engineering the Future of Horological Excellence</p>
+        </header>
+
+        <section id="market-overview" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#003f5c]">An Industry in Motion</h2>
+                <p class="mt-2 text-lg text-[#2f4b7c] max-w-3xl mx-auto">The global luxury watch market is defined by strong growth, fueled by consumer demand for premium, personalized, and innovative timepieces. This dynamic landscape presents both immense opportunities and significant challenges.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 kpi-card">
+                    <p class="text-2xl font-semibold text-[#a05195] mb-2">Projected Market Growth</p>
+                    <p class="text-6xl font-extrabold text-[#d45087]">$4.71B</p>
+                    <p class="text-lg text-gray-500 mt-2">Expected expansion between 2025 and 2029, showcasing a robust market trajectory.</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 kpi-card">
+                     <p class="text-2xl font-semibold text-[#a05195] mb-2">Compound Annual Growth Rate</p>
+                    <p class="text-6xl font-extrabold text-[#d45087]">2.4%</p>
+                    <p class="text-lg text-gray-500 mt-2">A steady CAGR underscores the sustained consumer interest and investment in luxury watches.</p>
+                </div>
+            </div>
+            <div class="mt-12 bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                 <h3 class="text-2xl font-bold text-[#003f5c] text-center mb-4">The Rise of the Pre-Owned Market</h3>
+                 <p class="text-center text-lg text-[#2f4b7c] max-w-4xl mx-auto mb-6">A key driver of change is the surging pre-owned luxury watch market, projected to exceed $30 billion by 2025. This boom amplifies the need for verifiable authenticity and provenance, making a watch's documented history a critical factor in its value.</p>
+                <div class="chart-container mx-auto">
+                    <canvas id="preOwnedMarketChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="challenges" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#003f5c]">The Core Challenges of Modern Horology</h2>
+                <p class="mt-2 text-lg text-[#2f4b7c] max-w-3xl mx-auto">Balancing artisanal heritage with modern demands for scalability, consistency, and rapid innovation is the central challenge. Success requires overcoming critical hurdles in precision, efficiency, and brand integrity.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h3 class="text-2xl font-bold text-[#003f5c] mb-4">Challenge 1: Uncompromising Precision vs. High Rejection Rates</h3>
+                    <p class="text-lg text-[#2f4b7c] mb-6">In luxury watchmaking, even microscopic scratches or sub-micron deviations can lead to part rejection. Traditional manufacturing often sees rejection rates as high as 30-40%, leading to significant waste and cost.</p>
+                    <div class="chart-container">
+                        <canvas id="rejectionRateChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h3 class="text-2xl font-bold text-[#003f5c] mb-4">Challenge 2: Accelerating Innovation vs. Long Prototyping Cycles</h3>
+                    <p class="text-lg text-[#2f4b7c] mb-6">The market demands rapid innovation, but traditional physical prototyping is slow, costly, and resource-intensive, often requiring multiple iterations to perfect a single design and hindering time-to-market.</p>
+                    <div class="chart-container">
+                        <canvas id="prototypingCycleChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="solution-digital-thread" class="mb-20 text-center">
+            <h2 class="text-3xl font-bold text-[#003f5c]">The Solution: A Unified Digital Thread</h2>
+            <p class="mt-2 text-lg text-[#2f4b7c] max-w-3xl mx-auto mb-12">The 3DEXPERIENCE platform creates a seamless digital thread, connecting every phase of a product's lifecycle. This integrated data flow from concept to customer is the key to unlocking unprecedented efficiency, quality, and innovation.</p>
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                <div class="flex flex-col md:flex-row justify-center items-center gap-x-8 gap-y-8">
+                    <div class="text-center flow-line">
+                        <div class="bg-[#003f5c] text-white rounded-full w-32 h-32 flex flex-col justify-center items-center p-4 shadow-xl">
+                            <span class="font-bold text-lg">ENOVIA</span>
+                            <span class="text-sm">Data & Lifecycle Management</span>
+                        </div>
+                    </div>
+                    <div class="text-center flow-line">
+                        <div class="bg-[#665191] text-white rounded-full w-32 h-32 flex flex-col justify-center items-center p-4 shadow-xl">
+                            <span class="font-bold text-lg">SIMULIA</span>
+                            <span class="text-sm">Virtual Prototyping</span>
+                        </div>
+                    </div>
+                    <div class="text-center flow-line">
+                        <div class="bg-[#d45087] text-white rounded-full w-32 h-32 flex flex-col justify-center items-center p-4 shadow-xl">
+                           <span class="font-bold text-lg">DELMIA</span>
+                            <span class="text-sm">Digital Manufacturing</span>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-[#ffa600] text-white rounded-full w-32 h-32 flex flex-col justify-center items-center p-4 shadow-xl">
+                            <span class="font-bold text-lg">PRAVAQ</span>
+                             <span class="text-sm">Finished Timepiece</span>
+                        </div>
+                    </div>
+                </div>
+                 <p class="mt-8 text-lg text-[#2f4b7c] max-w-4xl mx-auto">This process ensures that design intent captured in ENOVIA flows seamlessly to virtual validation in SIMULIA, and on to optimized production in DELMIA, creating a single source of truth for every watch.</p>
+            </div>
+        </section>
+
+        <section id="benefits" class="mb-20">
+             <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#003f5c]">Transforming Challenges into Strategic Advantages</h2>
+                <p class="mt-2 text-lg text-[#2f4b7c] max-w-3xl mx-auto">By embracing digitalization, PRAVAQ can see dramatic, quantifiable improvements across quality, efficiency, and innovation speed, turning operational hurdles into competitive differentiators.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h3 class="text-2xl font-bold text-[#003f5c] mb-4">Operational KPI Transformation</h3>
+                    <p class="text-lg text-[#2f4b7c] mb-6">The platform's impact is measurable. Virtual simulation and process optimization lead to higher quality parts, faster machine setup, and a dramatic reduction in costly warranty claims, directly improving the bottom line.</p>
+                    <div class="chart-container h-[450px] md:h-[400px]">
+                        <canvas id="kpiImprovementChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 flex flex-col justify-center">
+                    <h3 class="text-2xl font-bold text-[#003f5c] mb-4">Accelerated Machining</h3>
+                     <p class="text-lg text-[#2f4b7c] mb-6">DELMIA's knowledge-based automation streamlines CNC programming, leading to a massive reduction in programming time and faster production cycles.</p>
+                    <div class="chart-container h-64 md:h-auto">
+                        <canvas id="cncReductionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="trust-authenticity" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#003f5c]">Ensuring Trust, Authenticity, and Sustainability</h2>
+                <p class="mt-2 text-lg text-[#2f4b7c] max-w-3xl mx-auto">In a market threatened by counterfeits and demanding ethical sourcing, ENOVIA's digital thread provides the foundation for verifiable provenance, protecting brand integrity and building consumer confidence.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h3 class="text-2xl font-bold text-[#003f5c] mb-4">The Challenge of Material Sourcing</h3>
+                    <p class="text-lg text-[#2f4b7c] mb-6">The luxury watch industry relies heavily on newly mined gold. Digital traceability enables a transparent shift toward more sustainable, recycled materials without compromising quality or authenticity.</p>
+                     <div class="chart-container">
+                        <canvas id="goldSourcingChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <h3 class="text-2xl font-bold text-[#003f5c] mb-4">The Digital Product Passport</h3>
+                    <p class="text-lg text-[#2f4b7c] mb-6">Each PRAVAQ watch is given a unique, verifiable digital identity. This immutable record tracks its entire lifecycle, from material sourcing and manufacturing to ownership transfers and service history, making its provenance undeniable.</p>
+                    <div class="space-y-4 mt-4">
+                        <div class="flex items-center">
+                            <div class="bg-[#a05195] text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg mr-4">1</div>
+                            <p class="text-lg"><strong>Material Sourcing:</strong> Certified ethical and recycled materials are digitally recorded.</p>
+                        </div>
+                         <div class="flex items-center">
+                            <div class="bg-[#d45087] text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg mr-4">2</div>
+                            <p class="text-lg"><strong>Manufacturing:</strong> "As-built" data, including artisan details and quality checks, are logged.</p>
+                        </div>
+                         <div class="flex items-center">
+                            <div class="bg-[#f95d6a] text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg mr-4">3</div>
+                            <p class="text-lg"><strong>Sale & Ownership:</strong> Initial sale and subsequent ownership transfers are securely registered.</p>
+                        </div>
+                         <div class="flex items-center">
+                            <div class="bg-[#ff7c43] text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg mr-4">4</div>
+                            <p class="text-lg"><strong>Service History:</strong> All maintenance and repairs are added to the lifelong digital record.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="holistic-advantage" class="text-center">
+             <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#003f5c]">The PRAVAQ Advantage: A Holistic Transformation</h2>
+                <p class="mt-2 text-lg text-[#2f4b7c] max-w-3xl mx-auto">The 3DEXPERIENCE platform delivers a comprehensive, balanced improvement across all key business drivers, solidifying PRAVAQ's position as an industry leader in both craftsmanship and technology.</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                <div class="chart-container mx-auto h-[450px] md:h-[500px]">
+                    <canvas id="holisticImprovementChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+
+    </div>
+
+    <footer class="text-center p-8 mt-12 bg-[#003f5c] text-white">
+        <p>&copy; 2025 PRAVAQ. All rights reserved. Infographic powered by the 3DEXPERIENCE Platform.</p>
+    </footer>
+
+    <script>
+        const colorPalette = {
+            blueDark: '#003f5c',
+            blueMid: '#2f4b7c',
+            purpleDark: '#665191',
+            purpleMid: '#a05195',
+            pinkDark: '#d45087',
+            pinkMid: '#f95d6a',
+            orangeMid: '#ff7c43',
+            orangeLight: '#ffa600'
+        };
+
+        const chartColors = [
+            colorPalette.blueDark,
+            colorPalette.purpleDark,
+            colorPalette.pinkDark,
+            colorPalette.orangeMid,
+            colorPalette.blueMid,
+            colorPalette.purpleMid,
+            colorPalette.pinkMid,
+            colorPalette.orangeLight
+        ];
+        
+        function wrapLabel(str, maxWidth) {
+            if (str.length <= maxWidth) {
+                return str;
+            }
+            const words = str.split(' ');
+            let lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if ((currentLine + ' ' + words[i]).length > maxWidth) {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                } else {
+                    currentLine += ' ' + words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        const tooltipTitleCallback = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                              return label.join(' ');
+                            }
+                            return label;
+                        }
+                    }
+                },
+                legend: {
+                    labels: {
+                        color: colorPalette.blueDark,
+                         font: {
+                            size: 14
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: { color: colorPalette.blueMid, beginAtZero: true, font: {size: 12} },
+                    grid: { color: '#e0e6f0' }
+                },
+                x: {
+                    ticks: { color: colorPalette.blueMid, font: {size: 12} },
+                     grid: { display: false }
+                }
+            }
+        };
+
+        new Chart(document.getElementById('preOwnedMarketChart'), {
+            type: 'line',
+            data: {
+                labels: ['2022', '2023', '2024', '2025'],
+                datasets: [{
+                    label: 'Pre-Owned Market Value (in $B)',
+                    data: [20, 24, 28, 32],
+                    borderColor: colorPalette.pinkDark,
+                    backgroundColor: 'rgba(212, 80, 135, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: { ...tooltipTitleCallback, responsive: true, maintainAspectRatio: false }
+        });
+
+        new Chart(document.getElementById('rejectionRateChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Traditional Manufacturing', 'With 3DEXPERIENCE'],
+                datasets: [{
+                    label: 'Part Rejection Rate (%)',
+                    data: [35, 4],
+                    backgroundColor: [colorPalette.pinkMid, colorPalette.purpleDark],
+                    borderColor: [colorPalette.pinkDark, colorPalette.purpleMid],
+                    borderWidth: 1,
+                    barPercentage: 0.5
+                }]
+            },
+            options: { ...tooltipTitleCallback, responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
+        });
+
+        new Chart(document.getElementById('prototypingCycleChart'), {
+            type: 'line',
+            data: {
+                labels: ['Concept', 'Design', 'Physical Prototype 1', 'Test', 'Prototype 2', 'Finalize'],
+                datasets: [
+                    {
+                        label: 'Traditional Process (Months)',
+                        data: [0, 2, 5, 6, 8, 10],
+                        borderColor: colorPalette.orangeMid,
+                        backgroundColor: 'transparent',
+                        tension: 0.1,
+                        borderDash: [5, 5]
+                    },
+                    {
+                        label: 'With Virtual Prototyping (Months)',
+                        data: [0, 1.5, null, 2.5, null, 4],
+                        borderColor: colorPalette.purpleDark,
+                        backgroundColor: 'transparent',
+                        tension: 0.1,
+                        spanGaps: true
+                    }
+                ]
+            },
+            options: { ...tooltipTitleCallback, responsive: true, maintainAspectRatio: false }
+        });
+
+        new Chart(document.getElementById('kpiImprovementChart'), {
+            type: 'bar',
+            data: {
+                labels: [wrapLabel('Part Quality', 16), wrapLabel('Machine Setup Time', 16), wrapLabel('Warranty Claims', 16)],
+                datasets: [
+                    {
+                        label: 'Before 3DEXPERIENCE (Baseline)',
+                        data: [100, 100, 100],
+                        backgroundColor: colorPalette.pinkMid,
+                    },
+                    {
+                        label: 'After 3DEXPERIENCE (Improvement)',
+                        data: [130, 45, 47.5],
+                        backgroundColor: colorPalette.purpleDark,
+                    }
+                ]
+            },
+            options: { ...tooltipTitleCallback, responsive: true, maintainAspectRatio: false, plugins: {...tooltipTitleCallback.plugins, tooltip: {...tooltipTitleCallback.plugins.tooltip, callbacks: {...tooltipTitleCallback.plugins.tooltip.callbacks, label: (c) => `${c.dataset.label}: ${c.raw}%` }}}}
+        });
+
+        new Chart(document.getElementById('cncReductionChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Remaining Time', 'Time Reduced'],
+                datasets: [{
+                    label: 'CNC Programming Time',
+                    data: [20, 80],
+                    backgroundColor: [colorPalette.blueMid, colorPalette.purpleDark],
+                    borderColor: '#ffffff',
+                    borderWidth: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: {color: colorPalette.blueDark, font: {size: 14}} },
+                    tooltip: tooltipTitleCallback.plugins.tooltip
+                },
+                cutout: '70%'
+            }
+        });
+
+        new Chart(document.getElementById('goldSourcingChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Gold Usage in Luxury Industry'],
+                datasets: [
+                    {
+                        label: 'Newly Mined (75%)',
+                        data: [75],
+                        backgroundColor: colorPalette.orangeLight,
+                    },
+                    {
+                        label: 'Recycled (25%)',
+                        data: [25],
+                        backgroundColor: colorPalette.purpleDark,
+                    }
+                ]
+            },
+            options: {
+                ...tooltipTitleCallback,
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: { stacked: true, ticks: { display: false }, grid: { display: false } },
+                    y: { stacked: true, ticks: { display: false }, grid: { display: false } }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('holisticImprovementChart'), {
+            type: 'radar',
+            data: {
+                labels: ['Quality', 'Innovation Speed', 'Efficiency', 'Brand Integrity', 'Sustainability'],
+                datasets: [{
+                    label: 'PRAVAQ with 3DEXPERIENCE',
+                    data: [95, 85, 90, 98, 80],
+                    fill: true,
+                    backgroundColor: 'rgba(102, 81, 145, 0.2)',
+                    borderColor: colorPalette.purpleDark,
+                    pointBackgroundColor: colorPalette.purpleDark,
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: colorPalette.purpleDark
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: '#e0e6f0' },
+                        grid: { color: '#e0e6f0' },
+                        pointLabels: {
+                            font: { size: 14, weight: 'bold' },
+                             color: colorPalette.blueDark
+                        },
+                        ticks: {
+                            backdropColor: '#f0f4f8',
+                            color: colorPalette.blueMid,
+                            stepSize: 20
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                },
+                plugins: {
+                     legend: { display: false },
+                     tooltip: tooltipTitleCallback.plugins.tooltip
+                }
+            }
+        });
+    </script>
+</body>
+</html>
