@@ -1,1 +1,1 @@
-# pravaq
+#PRAVAQ
