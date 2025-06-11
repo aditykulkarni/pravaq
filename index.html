@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Chosen Palette: "Deep Blue & Gold" - A custom palette inspired by luxury and technology themes, using a base of deep blues and grays, with vibrant gold, teal, and magenta for accents and data visualization to create a professional, high-contrast, and engaging feel. -->
+    <!-- Application Structure Plan: The application is structured as a single-page narrative journey, starting with a high-level market overview, diving into the core business challenges, presenting the 3DEXPERIENCE platform as the integrated solution, visualizing the tangible KPI improvements in an interactive dashboard, explaining the digital passport concept for brand integrity, and concluding with a holistic view of the transformation. This top-down, problem-solution-impact flow was chosen over the report's linear structure to make the complex information more digestible and engaging for a business audience, allowing them to grasp the strategic value quickly. User interaction is centered on hovering or clicking cards and exploring dynamic charts. -->
+    <!-- Visualization & Content Choices: 
+        - Market Growth (Inform): A simple line chart (Chart.js) was chosen to clearly show the time-series projection for the pre-owned market. Dynamic stat cards use large text to highlight key numbers.
+        - Core Challenges (Compare): An interactive card layout with bar charts (Chart.js) was selected to let users explore each challenge. This allows a direct "before and after" comparison for KPIs like rejection rates and prototyping time, making the problem's scale immediately apparent. Interaction: Hover/Click on cards.
+        - Digital Thread (Organize): A structured HTML/CSS diagram with flexbox was used instead of an image or SVG to represent the flow from ENOVIA -> SIMULIA -> DELMIA. This is lightweight, responsive, and adheres to the no-SVG rule.
+        - KPI Impact Dashboard (Compare/Change): A multi-chart dashboard with grouped bar charts (Chart.js) provides the core interactive experience. This allows a clear comparison of multiple "Before vs. After" metrics, grouped logically by Quality, Speed, and Cost. This is the most effective way to show the widespread, quantifiable benefits.
+        - Digital Passport (Organize): A styled HTML step-by-step list visually explains the lifecycle stages, which is clearer and more accessible than plain text.
+        - Holistic Advantage (Compare): A radar chart (Chart.js) was chosen to perfectly visualize the balanced, multi-faceted improvements across key strategic areas, providing a powerful summary visual.
+        - Justification: All choices prioritize clarity, interactivity, and a narrative that simplifies complex data relationships. Chart.js (Canvas) is used for all data visualizations. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <title>PRAVAQ: Interactive Digital Transformation Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Teko:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #0a192f;
+            color: #ccd6f6;
+        }
+        .font-header {
+            font-family: 'Teko', sans-serif;
+        }
+        .glass-card {
+            background: rgba(10, 25, 47, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(45, 212, 191, 0.1);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            max-height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .step-line::before {
+            content: '';
+            position: absolute;
+            left: 1.25rem;
+            top: 2.5rem;
+            bottom: -0.5rem;
+            width: 2px;
+            background-color: #2dd4bf;
+            opacity: 0.3;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-link:hover {
+            color: #2dd4bf;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2dd4bf;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="sticky top-0 z-50 glass-card shadow-lg">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="font-header text-3xl font-bold text-white">PRAVAQ</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#market" class="nav-link text-gray-300 px-3 py-2 rounded-md text-sm font-medium">Market</a>
+                        <a href="#challenges" class="nav-link text-gray-300 px-3 py-2 rounded-md text-sm font-medium">Challenges</a>
+                        <a href="#solution" class="nav-link text-gray-300 px-3 py-2 rounded-md text-sm font-medium">Solution</a>
+                        <a href="#impact" class="nav-link text-gray-300 px-3 py-2 rounded-md text-sm font-medium">Impact</a>
+                        <a href="#passport" class="nav-link text-gray-300 px-3 py-2 rounded-md text-sm font-medium">Authenticity</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <section id="hero" class="text-center py-20">
+            <h2 class="font-header text-5xl md:text-7xl font-bold text-white tracking-wide">Engineering Horological Excellence</h2>
+            <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-400">This is the interactive story of how PRAVAQ is navigating the future of luxury watchmaking by embracing a digital-first strategy with the 3DEXPERIENCE platform, turning industry challenges into competitive advantages.</p>
+        </section>
+
+        <section id="market" class="my-16">
+            <h3 class="font-header text-4xl font-semibold text-white text-center mb-2">The Market Landscape</h3>
+            <p class="text-center text-gray-400 max-w-3xl mx-auto mb-12">The luxury watch industry is marked by robust growth and evolving consumer demands. Key trends like premiumization, customization, and the booming pre-owned market create both immense opportunities and significant pressures for manufacturers.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="glass-card p-8 rounded-lg">
+                    <p class="font-header text-6xl font-bold text-teal-300">$4.71B</p>
+                    <p class="mt-2 text-lg text-gray-300">Projected Market Growth (2025-2029)</p>
+                </div>
+                <div class="glass-card p-8 rounded-lg">
+                    <p class="font-header text-6xl font-bold text-teal-300">2.4%</p>
+                    <p class="mt-2 text-lg text-gray-300">Compound Annual Growth Rate</p>
+                </div>
+                <div class="glass-card p-8 rounded-lg">
+                    <p class="font-header text-6xl font-bold text-teal-300">$30B+</p>
+                    <p class="mt-2 text-lg text-gray-300">Pre-Owned Market by 2025</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="challenges" class="my-24">
+            <h3 class="font-header text-4xl font-semibold text-white text-center mb-2">The Core Challenges</h3>
+            <p class="text-center text-gray-400 max-w-3xl mx-auto mb-12">Success in modern horology requires overcoming critical hurdles. From sub-micron precision to counterfeit threats, these challenges demand a more integrated, intelligent approach to manufacturing.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="glass-card p-6 rounded-lg">
+                    <h4 class="font-header text-2xl font-bold text-teal-300">Precision & Quality</h4>
+                    <p class="mt-2 text-gray-400 mb-4">High rejection rates (up to 40%) due to microscopic deviations from sub-micron tolerances lead to immense waste and cost.</p>
+                    <div class="chart-container">
+                        <canvas id="rejectionRateChart"></canvas>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-lg">
+                    <h4 class="font-header text-2xl font-bold text-teal-300">Innovation Speed</h4>
+                    <p class="mt-2 text-gray-400 mb-4">Long, costly physical prototyping cycles clash with market demands for rapid innovation and customization.</p>
+                     <div class="chart-container">
+                        <canvas id="prototypingCycleChart"></canvas>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-lg">
+                    <h4 class="font-header text-2xl font-bold text-teal-300">Brand Integrity</h4>
+                    <p class="mt-2 text-gray-400 mb-4">Sophisticated counterfeits and lack of supply chain transparency erode consumer trust and devalue the brand.</p>
+                     <div class="flex flex-col items-center justify-center h-full">
+                        <span class="text-6xl mb-4">🛡️</span>
+                        <p class="text-center text-lg">Digital Passports provide verifiable provenance, combating fakes and ensuring lifelong value.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="solution" class="my-24">
+            <h3 class="font-header text-4xl font-semibold text-white text-center mb-2">The Integrated Solution: A Digital Thread</h3>
+            <p class="text-center text-gray-400 max-w-3xl mx-auto mb-12">The 3DEXPERIENCE platform creates a seamless digital thread, connecting every phase of a product's lifecycle. This single source of truth eliminates data silos and empowers collaborative innovation from concept to customer.</p>
+            <div class="glass-card p-8 rounded-lg">
+                <div class="flex flex-col md:flex-row items-center justify-around gap-8">
+                    <div class="text-center">
+                        <div class="w-32 h-32 rounded-full border-2 border-fuchsia-400 flex flex-col items-center justify-center bg-fuchsia-400/10">
+                            <p class="font-header text-2xl text-fuchsia-300">ENOVIA</p>
+                            <p class="text-sm text-gray-400">Data & Lifecycle Management</p>
+                        </div>
+                    </div>
+                    <div class="font-header text-4xl text-teal-300 hidden md:block">&rarr;</div>
+                    <div class="font-header text-4xl text-teal-300 md:hidden">&darr;</div>
+                    <div class="text-center">
+                        <div class="w-32 h-32 rounded-full border-2 border-teal-300 flex flex-col items-center justify-center bg-teal-300/10">
+                            <p class="font-header text-2xl text-teal-300">SIMULIA</p>
+                            <p class="text-sm text-gray-400">Virtual Prototyping</p>
+                        </div>
+                    </div>
+                    <div class="font-header text-4xl text-teal-300 hidden md:block">&rarr;</div>
+                     <div class="font-header text-4xl text-teal-300 md:hidden">&darr;</div>
+                    <div class="text-center">
+                       <div class="w-32 h-32 rounded-full border-2 border-amber-300 flex flex-col items-center justify-center bg-amber-300/10">
+                            <p class="font-header text-2xl text-amber-300">DELMIA</p>
+                            <p class="text-sm text-gray-400">Digital Manufacturing</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center mt-8 text-lg text-gray-400 max-w-4xl mx-auto">This integrated flow ensures design intent is perfectly translated into a high-quality, finished product with unparalleled efficiency.</p>
+            </div>
+        </section>
+
+        <section id="impact" class="my-24">
+            <h3 class="font-header text-4xl font-semibold text-white text-center mb-2">Visualizing the Transformation</h3>
+            <p class="text-center text-gray-400 max-w-3xl mx-auto mb-12">The adoption of the 3DEXPERIENCE platform delivers dramatic, quantifiable improvements across key business drivers. Explore the interactive charts below to see the "before and after" impact on PRAVAQ's operations.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="glass-card p-6 rounded-lg">
+                     <h4 class="font-header text-2xl font-bold text-teal-300">Quality Revolution</h4>
+                    <p class="mt-2 text-gray-400 mb-4">Virtual testing and process simulation drastically improve part quality and reduce costly warranty claims.</p>
+                    <div class="chart-container">
+                        <canvas id="qualityKpiChart"></canvas>
+                    </div>
+                </div>
+                 <div class="glass-card p-6 rounded-lg">
+                     <h4 class="font-header text-2xl font-bold text-teal-300">Innovation Acceleration</h4>
+                    <p class="mt-2 text-gray-400 mb-4">Automated programming and streamlined change management processes cut development time by months.</p>
+                    <div class="chart-container">
+                        <canvas id="speedKpiChart"></canvas>
+                    </div>
+                </div>
+                 <div class="glass-card p-6 rounded-lg">
+                    <h4 class="font-header text-2xl font-bold text-teal-300">Efficiency & Cost Savings</h4>
+                    <p class="mt-2 text-gray-400 mb-4">Optimized machine usage and predictive maintenance lead to significant reductions in operational costs.</p>
+                     <div class="chart-container">
+                        <canvas id="efficiencyKpiChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="passport" class="my-24">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                     <h3 class="font-header text-4xl font-semibold text-white mb-2">The Digital Passport: A Fortress of Authenticity</h3>
+                    <p class="text-gray-400 max-w-xl mb-8">Each PRAVAQ watch is born with a unique, immutable digital identity on the ENOVIA-powered digital thread. This "Digital Product Passport" creates a verifiable record of its entire lifecycle, protecting brand integrity and enhancing its value in the booming pre-owned market.</p>
+                    <div class="relative space-y-2">
+                        <div class="relative pl-8 step-line">
+                            <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-teal-400/10 border-2 border-teal-400 flex items-center justify-center font-header text-xl text-teal-300">1</div>
+                            <h5 class="font-bold text-lg text-white">Ethical Sourcing</h5>
+                            <p class="text-gray-400">Material origins and certifications are logged.</p>
+                        </div>
+                         <div class="relative pl-8 step-line">
+                            <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-teal-400/10 border-2 border-teal-400 flex items-center justify-center font-header text-xl text-teal-300">2</div>
+                            <h5 class="font-bold text-lg text-white">Artisanal Crafting</h5>
+                            <p class="text-gray-400">"As-built" data and artisan details are recorded.</p>
+                        </div>
+                         <div class="relative pl-8 step-line">
+                            <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-teal-400/10 border-2 border-teal-400 flex items-center justify-center font-header text-xl text-teal-300">3</div>
+                            <h5 class="font-bold text-lg text-white">Ownership History</h5>
+                            <p class="text-gray-400">Sales and ownership transfers are securely registered.</p>
+                        </div>
+                         <div class="relative pl-8">
+                            <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-teal-400/10 border-2 border-teal-400 flex items-center justify-center font-header text-xl text-teal-300">4</div>
+                            <h5 class="font-bold text-lg text-white">Service Lifecycle</h5>
+                            <p class="text-gray-400">All maintenance is added to the lifelong digital record.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-lg">
+                    <h4 class="font-header text-2xl font-bold text-white text-center">Holistic Business Advantage</h4>
+                    <p class="mt-2 text-gray-400 mb-4 text-center">The platform delivers a comprehensive, balanced improvement across all key business drivers, solidifying PRAVAQ's leadership in both craftsmanship and technology.</p>
+                    <div class="chart-container h-[400px]">
+                         <canvas id="holisticImprovementChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    <footer class="mt-16 py-8 text-center border-t border-gray-800">
+        <p class="text-gray-500">&copy; 2025 PRAVAQ. Powered by the 3DEXPERIENCE Platform.</p>
+    </footer>
+
+    <script>
+        const chartTextColor = '#ccd6f6';
+        const chartGridColor = 'rgba(45, 212, 191, 0.1)';
+        const beforeColor = 'rgba(236, 72, 153, 0.7)';
+        const afterColor = 'rgba(45, 212, 191, 0.7)';
+        const beforeBorderColor = 'rgb(236, 72, 153)';
+        const afterBorderColor = 'rgb(45, 212, 191)';
+
+        const tooltipTitleCallback = {
+            plugins: {
+                tooltip: {
+                    titleFont: { family: "'Roboto', sans-serif" },
+                    bodyFont: { family: "'Roboto', sans-serif" },
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            return Array.isArray(label) ? label.join(' ') : label;
+                        }
+                    }
+                },
+                legend: {
+                    labels: {
+                        color: chartTextColor,
+                        font: { family: "'Roboto', sans-serif", size: 12 }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: { color: chartTextColor, font: { family: "'Roboto', sans-serif" } },
+                    grid: { color: chartGridColor }
+                },
+                x: {
+                    ticks: { color: chartTextColor, font: { family: "'Roboto', sans-serif" } },
+                    grid: { color: chartGridColor }
+                }
+            }
+        };
+
+        new Chart(document.getElementById('rejectionRateChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Rejection Rate'],
+                datasets: [
+                    { label: 'Before', data: [35], backgroundColor: beforeColor, borderColor: beforeBorderColor, borderWidth: 1 },
+                    { label: 'After', data: [4], backgroundColor: afterColor, borderColor: afterBorderColor, borderWidth: 1 }
+                ]
+            },
+            options: { ...tooltipTitleCallback, responsive: true, maintainAspectRatio: false }
+        });
+
+        new Chart(document.getElementById('prototypingCycleChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Prototyping Time (Cycles)'],
+                datasets: [
+                    { label: 'Before', data: [100], backgroundColor: beforeColor, borderColor: beforeBorderColor, borderWidth: 1 },
+                    { label: 'After (Reduced by 60%)', data: [40], backgroundColor: afterColor, borderColor: afterBorderColor, borderWidth: 1 }
+                ]
+            },
+            options: { ...tooltipTitleCallback, responsive: true, maintainAspectRatio: false }
+        });
+
+        new Chart(document.getElementById('qualityKpiChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Part Rejection Rate', 'Warranty Claims'],
+                datasets: [
+                    { label: 'Before (Higher is worse)', data: [35, 100], backgroundColor: beforeColor },
+                    { label: 'After (Lower is better)', data: [4, 47.5], backgroundColor: afterColor }
+                ]
+            },
+            options: { ...tooltipTitleCallback, responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
+        });
+
+        new Chart(document.getElementById('speedKpiChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Prototyping Cycles', 'CNC Programming Time'],
+                datasets: [
+                    { label: 'Before (Longer Time)', data: [100, 100], backgroundColor: beforeColor },
+                    { label: 'After (Shorter Time)', data: [40, 20], backgroundColor: afterColor }
+                ]
+            },
+            options: { ...tooltipTitleCallback, responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
+        });
+
+        new Chart(document.getElementById('efficiencyKpiChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Machine Setup Time', 'Maintenance Costs'],
+                datasets: [
+                    { label: 'Before (Higher Cost/Time)', data: [100, 100], backgroundColor: beforeColor },
+                    { label: 'After (Lower Cost/Time)', data: [45, 65], backgroundColor: afterColor }
+                ]
+            },
+            options: { ...tooltipTitleCallback, responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
+        });
+        
+        new Chart(document.getElementById('holisticImprovementChart'), {
+            type: 'radar',
+            data: {
+                labels: ['Quality', 'Innovation Speed', 'Efficiency', 'Brand Integrity', 'Sustainability'],
+                datasets: [{
+                    label: 'PRAVAQ Advantage',
+                    data: [95, 85, 90, 98, 80],
+                    fill: true,
+                    backgroundColor: 'rgba(45, 212, 191, 0.2)',
+                    borderColor: 'rgb(45, 212, 191)',
+                    pointBackgroundColor: 'rgb(45, 212, 191)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(45, 212, 191)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: chartGridColor },
+                        grid: { color: chartGridColor },
+                        pointLabels: {
+                            font: { size: 12, family: "'Roboto', sans-serif" },
+                            color: chartTextColor
+                        },
+                        ticks: {
+                            backdropColor: 'transparent',
+                            color: chartTextColor,
+                            stepSize: 20
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                },
+                plugins: {
+                     legend: { display: false },
+                     tooltip: tooltipTitleCallback.plugins.tooltip
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
