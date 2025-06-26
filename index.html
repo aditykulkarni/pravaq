@@ -1,411 +1,846 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Chosen Palette: "Deep Blue & Gold" - A custom palette inspired by luxury and technology themes, using a base of deep blues and grays, with vibrant gold, teal, and magenta for accents and data visualization to create a professional, high-contrast, and engaging feel. -->
-    <!-- Application Structure Plan: The application is structured as a single-page narrative journey, starting with a high-level market overview, diving into the core business challenges, presenting the 3DEXPERIENCE platform as the integrated solution, visualizing the tangible KPI improvements in an interactive dashboard, explaining the digital passport concept for brand integrity, and concluding with a holistic view of the transformation. This top-down, problem-solution-impact flow was chosen over the report's linear structure to make the complex information more digestible and engaging for a business audience, allowing them to grasp the strategic value quickly. User interaction is centered on hovering or clicking cards and exploring dynamic charts. -->
-    <!-- Visualization & Content Choices: 
-        - Market Growth (Inform): A simple line chart (Chart.js) was chosen to clearly show the time-series projection for the pre-owned market. Dynamic stat cards use large text to highlight key numbers.
-        - Core Challenges (Compare): An interactive card layout with bar charts (Chart.js) was selected to let users explore each challenge. This allows a direct "before and after" comparison for KPIs like rejection rates and prototyping time, making the problem's scale immediately apparent. Interaction: Hover/Click on cards.
-        - Digital Thread (Organize): A structured HTML/CSS diagram with flexbox was used instead of an image or SVG to represent the flow from ENOVIA -> SIMULIA -> DELMIA. This is lightweight, responsive, and adheres to the no-SVG rule.
-        - KPI Impact Dashboard (Compare/Change): A multi-chart dashboard with grouped bar charts (Chart.js) provides the core interactive experience. This allows a clear comparison of multiple "Before vs. After" metrics, grouped logically by Quality, Speed, and Cost. This is the most effective way to show the widespread, quantifiable benefits.
-        - Digital Passport (Organize): A styled HTML step-by-step list visually explains the lifecycle stages, which is clearer and more accessible than plain text.
-        - Holistic Advantage (Compare): A radar chart (Chart.js) was chosen to perfectly visualize the balanced, multi-faceted improvements across key strategic areas, providing a powerful summary visual.
-        - Justification: All choices prioritize clarity, interactivity, and a narrative that simplifies complex data relationships. Chart.js (Canvas) is used for all data visualizations. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-    <title>PRAVAQ: Interactive Digital Transformation Report</title>
+    <title>Advanced Team Management Dashboard (Offline)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Teko:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #0a192f;
-            color: #ccd6f6;
-        }
-        .font-header {
-            font-family: 'Teko', sans-serif;
-        }
-        .glass-card {
-            background: rgba(10, 25, 47, 0.85);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(45, 212, 191, 0.1);
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 300px;
-            max-height: 350px;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 350px;
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
             }
         }
-        .step-line::before {
-            content: '';
-            position: absolute;
-            left: 1.25rem;
-            top: 2.5rem;
-            bottom: -0.5rem;
-            width: 2px;
-            background-color: #2dd4bf;
-            opacity: 0.3;
+    </script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <style>
+        /* Custom styles for the Liquid Glass UI with improved contrast */
+        :root, [data-theme="aqua"] {
+            --bg-gradient: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #0f172a; /* slate-900 */
+            --text-secondary: #334155; /* slate-700 */
+            --text-muted: #64748b; /* slate-500 */
+            --interactive-accent: #4f46e5; /* indigo-600 */
+            --interactive-accent-hover: #4338ca; /* indigo-700 */
+            --button-primary-bg: #3b82f6; /* blue-500 */
+            --button-primary-hover: #2563eb; /* blue-600 */
+            --star-active: #facc15; /* yellow-400 */
+            --star-inactive: #94a3b8; /* slate-400 */
         }
-        .nav-link {
-            transition: all 0.3s ease;
-            position: relative;
+        [data-theme="sunset"] {
+            --bg-gradient: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+            --glass-bg: rgba(255, 255, 255, 0.35);
+            --text-primary: #44403c; /* stone-700 */
+            --text-secondary: #57534e; /* stone-600 */
+            --text-muted: #78716c; /* stone-500 */
+            --interactive-accent: #f97316; /* orange-500 */
+            --interactive-accent-hover: #ea580c; /* orange-600 */
+            --button-primary-bg: #f97316;
+            --button-primary-hover: #ea580c;
+            --star-active: #f59e0b;
+            --star-inactive: #a8a29e;
         }
-        .nav-link:hover {
-            color: #2dd4bf;
+        [data-theme="forest"] {
+            --bg-gradient: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
+            --glass-bg: rgba(255, 255, 255, 0.4);
+            --text-primary: #14532d; /* green-900 */
+            --text-secondary: #166534; /* green-800 */
+            --text-muted: #15803d; /* green-700 */
+            --interactive-accent: #16a34a; /* green-600 */
+            --interactive-accent-hover: #15803d; /* green-700 */
+            --button-primary-bg: #16a34a;
+            --button-primary-hover: #15803d;
+            --star-active: #fde047;
+            --star-inactive: #4d7c0f;
         }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #2dd4bf;
-            transition: width 0.3s ease;
+        [data-theme="oceanic"] {
+            --bg-gradient: linear-gradient(120deg, #00c6ff 0%, #0072ff 100%);
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --text-primary: #f8fafc; /* slate-50 */
+            --text-secondary: #e2e8f0; /* slate-200 */
+            --text-muted: #94a3b8; /* slate-400 */
+            --interactive-accent: #60a5fa; /* blue-400 */
+            --interactive-accent-hover: #93c5fd; /* blue-300 */
+            --button-primary-bg: #60a5fa;
+            --button-primary-hover: #93c5fd;
+            --star-active: #fde047;
+            --star-inactive: #7dd3fc;
         }
-        .nav-link:hover::after {
-            width: 100%;
+
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-primary);
+        }
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 1rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+        }
+        .modal { transition: opacity 0.25s ease; }
+        .modal-content { transition: transform 0.25s ease; }
+        .number-input { -moz-appearance: textfield; }
+        .number-input::-webkit-outer-spin-button, .number-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .theme-button { width: 24px; height: 24px; border-radius: 9999px; border: 2px solid transparent; cursor: pointer; transition: border-color 0.2s ease; }
+        .theme-button.active { border-color: var(--text-primary); }
+        .star-rating svg { transition: color 0.2s ease-in-out, transform 0.1s ease-in-out; }
+        .star-rating svg:hover { transform: scale(1.2); }
+        .editable-field {
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 0.25rem;
+            padding: 0.125rem 0.25rem;
+            transition: all 0.2s ease-in-out;
+        }
+        .editable-field:hover, .editable-field:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
-<body class="antialiased">
+<body>
 
-    <nav class="sticky top-0 z-50 glass-card shadow-lg">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex-shrink-0">
-                    <h1 class="font-header text-3xl font-bold text-white">PRAVAQ</h1>
+    <div id="loading-spinner" class="flex items-center justify-center h-screen">
+        <div class="text-center">
+            <svg class="animate-spin h-12 w-12 text-slate-800 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="mt-4 text-lg font-semibold">Loading Dashboard...</p>
+        </div>
+    </div>
+
+    <div id="app-container" class="hidden min-h-screen font-sans p-4 sm:p-6 lg:p-8">
+        <div class="max-w-screen-xl mx-auto">
+            <header class="mb-8 flex justify-between items-start flex-wrap gap-4">
+                 <div>
+                    <h1 id="team-name" class="text-4xl font-bold" style="color: var(--text-primary);"></h1>
+                    <p class="text-lg" style="color: var(--text-secondary);">Offline-capable project, performance, and development tracker.</p>
                 </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#market" class="nav-link text-gray-300 px-3 py-2 rounded-md text-sm font-medium">Market</a>
-                        <a href="#challenges" class="nav-link text-gray-300 px-3 py-2 rounded-md text-sm font-medium">Challenges</a>
-                        <a href="#solution" class="nav-link text-gray-300 px-3 py-2 rounded-md text-sm font-medium">Solution</a>
-                        <a href="#impact" class="nav-link text-gray-300 px-3 py-2 rounded-md text-sm font-medium">Impact</a>
-                        <a href="#passport" class="nav-link text-gray-300 px-3 py-2 rounded-md text-sm font-medium">Authenticity</a>
+                <div class="flex items-center gap-4">
+                     <!-- Data Management -->
+                    <div class="flex items-center gap-2 p-1 glass-card">
+                         <button id="import-json-btn" class="inline-flex items-center px-3 py-2 font-semibold rounded-lg hover:bg-white/30 focus:outline-none transition-colors text-sm">
+                            <i data-lucide="upload" class="w-4 h-4 mr-2"></i> Import
+                        </button>
+                        <button id="export-json-btn" class="inline-flex items-center px-3 py-2 font-semibold rounded-lg hover:bg-white/30 focus:outline-none transition-colors text-sm">
+                            <i data-lucide="download" class="w-4 h-4 mr-2"></i> Export
+                        </button>
+                        <input type="file" id="json-file-input" class="hidden" accept=".json">
+                    </div>
+                     <!-- Theme Switcher -->
+                    <div id="theme-switcher" class="flex items-center gap-2 p-2 glass-card">
+                        <button class="theme-button" data-theme="aqua" style="background: linear-gradient(120deg, #89f7fe, #66a6ff);"></button>
+                        <button class="theme-button" data-theme="sunset" style="background: linear-gradient(120deg, #f6d365, #fda085);"></button>
+                        <button class="theme-button" data-theme="forest" style="background: linear-gradient(120deg, #d4fc79, #96e6a1);"></button>
+                        <button class="theme-button" data-theme="oceanic" style="background: linear-gradient(120deg, #00c6ff, #0072ff);"></button>
+                    </div>
+                    <button id="add-member-btn" class="glass-card inline-flex items-center px-4 py-2 font-semibold rounded-lg shadow-md hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent transition-colors">
+                        <i data-lucide="user-plus" class="w-5 h-5 mr-2"></i>
+                        Add Team Member
+                    </button>
+                </div>
+            </header>
+
+            <section id="dashboard-stats-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"></section>
+            <main>
+                <div id="members-grid" class="grid grid-cols-1 xl:grid-cols-2 gap-8"></div>
+                <div id="no-members-message" class="hidden text-center py-16 glass-card">
+                    <h2 class="text-2xl font-semibold" style="color: var(--text-primary);">Your dashboard is empty.</h2>
+                    <p class="mt-2" style="color: var(--text-secondary);">Click "Add Team Member" to get started.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal for adding items -->
+    <div id="modal" class="modal fixed inset-0 bg-black/50 z-50 flex justify-center items-center pointer-events-none opacity-0">
+        <div id="modal-content" class="modal-content glass-card p-6 w-full max-w-md transform -translate-y-10">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-xl font-bold" style="color: var(--text-primary);"></h3>
+                <button id="modal-close-btn" class="hover:text-slate-900" style="color: var(--text-secondary);">
+                     <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="modal-form" class="space-y-4">
+                 <div id="modal-inputs-container"></div>
+                <div class="mt-4 flex justify-end gap-2">
+                    <button type="button" id="modal-cancel-btn" class="px-4 py-2 bg-black/10 rounded-md hover:bg-black/20" style="color: var(--text-primary);">Cancel</button>
+                    <button type="submit" class="px-4 py-2 text-white font-semibold rounded-md" style="background-color: var(--button-primary-bg);">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal fixed inset-0 bg-black/60 z-50 flex justify-center items-center pointer-events-none opacity-0">
+        <div id="confirm-modal-content" class="modal-content glass-card p-6 w-full max-w-sm transform -translate-y-10 text-center">
+            <h3 id="confirm-title" class="text-xl font-bold" style="color: var(--text-primary);"></h3>
+            <p id="confirm-text" class="my-4" style="color: var(--text-secondary);"></p>
+            <div class="mt-6 flex justify-center gap-4">
+                <button type="button" id="confirm-cancel-btn" class="px-6 py-2 bg-black/10 rounded-lg hover:bg-black/20 font-semibold" style="color: var(--text-primary);">Cancel</button>
+                <button type="button" id="confirm-action-btn" class="px-6 py-2 text-white font-semibold rounded-lg bg-red-600 hover:bg-red-700">Confirm</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Schedule Chart Modal -->
+    <div id="schedule-modal" class="modal fixed inset-0 bg-black/60 z-50 flex justify-center items-center pointer-events-none opacity-0">
+        <div id="schedule-modal-content" class="modal-content glass-card p-4 sm:p-6 w-full max-w-4xl transform -translate-y-10 flex flex-col" style="height: 80vh;">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="schedule-modal-title" class="text-xl font-bold" style="color: var(--text-primary);">Task Schedule</h3>
+                <button id="schedule-modal-close-btn" class="hover:text-slate-900" style="color: var(--text-secondary);"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="flex-grow bg-black/5 rounded-lg p-2 relative">
+                <canvas id="schedule-chart-canvas"></canvas>
+                 <div id="schedule-empty-message" class="hidden text-center py-16 absolute inset-0 flex items-center justify-center">
+                    <div>
+                        <h2 class="text-xl font-semibold" style="color: var(--text-primary);">No Tasks with Dates</h2>
+                        <p class="mt-2" style="color: var(--text-secondary);">Add tasks with both start and end dates to see the schedule chart.</p>
                     </div>
                 </div>
             </div>
         </div>
-    </nav>
-
-    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-
-        <section id="hero" class="text-center py-20">
-            <h2 class="font-header text-5xl md:text-7xl font-bold text-white tracking-wide">Engineering Horological Excellence</h2>
-            <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-400">This is the interactive story of how PRAVAQ is navigating the future of luxury watchmaking by embracing a digital-first strategy with the 3DEXPERIENCE platform, turning industry challenges into competitive advantages.</p>
-            
-            <div class="mt-8">
-            <a href="https://r1132101308813-eu1-ifwe.3dexperience.3ds.com/#notification:0b21ac080f064dd88778af3c185febc6" 
-               class="inline-block px-6 py-3 bg-teal-500 text-white font-semibold rounded-lg 
-                      shadow-md hover:bg-teal-600 transition duration-300">Configure your PRAVAQ</a>
-            </div>    
-        </section>
-
-        <section id="market" class="my-16">
-            <h3 class="font-header text-4xl font-semibold text-white text-center mb-2">The Market Landscape</h3>
-            <p class="text-center text-gray-400 max-w-3xl mx-auto mb-12">The luxury watch industry is marked by robust growth and evolving consumer demands. Key trends like premiumization, customization, and the booming pre-owned market create both immense opportunities and significant pressures for manufacturers.</p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                <div class="glass-card p-8 rounded-lg">
-                    <p class="font-header text-6xl font-bold text-teal-300">$4.71B</p>
-                    <p class="mt-2 text-lg text-gray-300">Projected Market Growth (2025-2029)</p>
-                </div>
-                <div class="glass-card p-8 rounded-lg">
-                    <p class="font-header text-6xl font-bold text-teal-300">2.4%</p>
-                    <p class="mt-2 text-lg text-gray-300">Compound Annual Growth Rate</p>
-                </div>
-                <div class="glass-card p-8 rounded-lg">
-                    <p class="font-header text-6xl font-bold text-teal-300">$30B+</p>
-                    <p class="mt-2 text-lg text-gray-300">Pre-Owned Market by 2025</p>
-                </div>
+    </div>
+    
+    <!-- Report Modal -->
+    <div id="report-modal" class="modal fixed inset-0 bg-black/60 z-50 flex justify-center items-center pointer-events-none opacity-0">
+        <div id="report-modal-content" class="modal-content glass-card p-4 sm:p-6 w-full max-w-4xl transform -translate-y-10 flex flex-col" style="height: 80vh;">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="report-modal-title" class="text-xl font-bold" style="color: var(--text-primary);">Performance Report</h3>
+                <button id="report-modal-close-btn" class="hover:text-slate-900" style="color: var(--text-secondary);"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
-        </section>
-
-        <section id="challenges" class="my-24">
-            <h3 class="font-header text-4xl font-semibold text-white text-center mb-2">The Core Challenges</h3>
-            <p class="text-center text-gray-400 max-w-3xl mx-auto mb-12">Success in modern horology requires overcoming critical hurdles. From sub-micron precision to counterfeit threats, these challenges demand a more integrated, intelligent approach to manufacturing.</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="glass-card p-6 rounded-lg">
-                    <h4 class="font-header text-2xl font-bold text-teal-300">Precision & Quality</h4>
-                    <p class="mt-2 text-gray-400 mb-4">High rejection rates (up to 40%) due to microscopic deviations from sub-micron tolerances lead to immense waste and cost.</p>
-                    <div class="chart-container">
-                        <canvas id="rejectionRateChart"></canvas>
-                    </div>
-                </div>
-                <div class="glass-card p-6 rounded-lg">
-                    <h4 class="font-header text-2xl font-bold text-teal-300">Innovation Speed</h4>
-                    <p class="mt-2 text-gray-400 mb-4">Long, costly physical prototyping cycles clash with market demands for rapid innovation and customization.</p>
-                     <div class="chart-container">
-                        <canvas id="prototypingCycleChart"></canvas>
-                    </div>
-                </div>
-                <div class="glass-card p-6 rounded-lg">
-                    <h4 class="font-header text-2xl font-bold text-teal-300">Brand Integrity</h4>
-                    <p class="mt-2 text-gray-400 mb-4">Sophisticated counterfeits and lack of supply chain transparency erode consumer trust and devalue the brand.</p>
-                     <div class="flex flex-col items-center justify-center h-full">
-                        <span class="text-6xl mb-4">🛡️</span>
-                        <p class="text-center text-lg">Digital Passports provide verifiable provenance, combating fakes and ensuring lifelong value.</p>
-                    </div>
-                </div>
+            <div class="flex gap-4 mb-4">
+                <select id="report-timeframe" class="bg-white/50 border border-transparent rounded-md p-2">
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                </select>
+                <select id="report-year" class="bg-white/50 border border-transparent rounded-md p-2"></select>
+                <select id="report-period" class="bg-white/50 border border-transparent rounded-md p-2"></select>
             </div>
-        </section>
+            <div id="report-content-container" class="flex-grow overflow-auto bg-black/5 rounded-lg p-4"></div>
+        </div>
+    </div>
 
-        <section id="solution" class="my-24">
-            <h3 class="font-header text-4xl font-semibold text-white text-center mb-2">The Integrated Solution: A Digital Thread</h3>
-            <p class="text-center text-gray-400 max-w-3xl mx-auto mb-12">The 3DEXPERIENCE platform creates a seamless digital thread, connecting every phase of a product's lifecycle. This single source of truth eliminates data silos and empowers collaborative innovation from concept to customer.</p>
-            <div class="glass-card p-8 rounded-lg">
-                <div class="flex flex-col md:flex-row items-center justify-around gap-8">
-                    <div class="text-center">
-                        <div class="w-32 h-32 rounded-full border-2 border-fuchsia-400 flex flex-col items-center justify-center bg-fuchsia-400/10">
-                            <p class="font-header text-2xl text-fuchsia-300">ENOVIA</p>
-                            <p class="text-sm text-gray-400">Data & Lifecycle Management</p>
-                        </div>
-                    </div>
-                    <div class="font-header text-4xl text-teal-300 hidden md:block">&rarr;</div>
-                    <div class="font-header text-4xl text-teal-300 md:hidden">&darr;</div>
-                    <div class="text-center">
-                        <div class="w-32 h-32 rounded-full border-2 border-teal-300 flex flex-col items-center justify-center bg-teal-300/10">
-                            <p class="font-header text-2xl text-teal-300">SIMULIA</p>
-                            <p class="text-sm text-gray-400">Virtual Prototyping</p>
-                        </div>
-                    </div>
-                    <div class="font-header text-4xl text-teal-300 hidden md:block">&rarr;</div>
-                     <div class="font-header text-4xl text-teal-300 md:hidden">&darr;</div>
-                    <div class="text-center">
-                       <div class="w-32 h-32 rounded-full border-2 border-amber-300 flex flex-col items-center justify-center bg-amber-300/10">
-                            <p class="font-header text-2xl text-amber-300">DELMIA</p>
-                            <p class="text-sm text-gray-400">Digital Manufacturing</p>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-center mt-8 text-lg text-gray-400 max-w-4xl mx-auto">This integrated flow ensures design intent is perfectly translated into a high-quality, finished product with unparalleled efficiency.</p>
-            </div>
-        </section>
 
-        <section id="impact" class="my-24">
-            <h3 class="font-header text-4xl font-semibold text-white text-center mb-2">Visualizing the Transformation</h3>
-            <p class="text-center text-gray-400 max-w-3xl mx-auto mb-12">The adoption of the 3DEXPERIENCE platform delivers dramatic, quantifiable improvements across key business drivers. Explore the interactive charts below to see the "before and after" impact on PRAVAQ's operations.</p>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="glass-card p-6 rounded-lg">
-                     <h4 class="font-header text-2xl font-bold text-teal-300">Quality Revolution</h4>
-                    <p class="mt-2 text-gray-400 mb-4">Virtual testing and process simulation drastically improve part quality and reduce costly warranty claims.</p>
-                    <div class="chart-container">
-                        <canvas id="qualityKpiChart"></canvas>
-                    </div>
-                </div>
-                 <div class="glass-card p-6 rounded-lg">
-                     <h4 class="font-header text-2xl font-bold text-teal-300">Innovation Acceleration</h4>
-                    <p class="mt-2 text-gray-400 mb-4">Automated programming and streamlined change management processes cut development time by months.</p>
-                    <div class="chart-container">
-                        <canvas id="speedKpiChart"></canvas>
-                    </div>
-                </div>
-                 <div class="glass-card p-6 rounded-lg">
-                    <h4 class="font-header text-2xl font-bold text-teal-300">Efficiency & Cost Savings</h4>
-                    <p class="mt-2 text-gray-400 mb-4">Optimized machine usage and predictive maintenance lead to significant reductions in operational costs.</p>
-                     <div class="chart-container">
-                        <canvas id="efficiencyKpiChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="passport" class="my-24">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div>
-                     <h3 class="font-header text-4xl font-semibold text-white mb-2">The Digital Passport: A Fortress of Authenticity</h3>
-                    <p class="text-gray-400 max-w-xl mb-8">Each PRAVAQ watch is born with a unique, immutable digital identity on the ENOVIA-powered digital thread. This "Digital Product Passport" creates a verifiable record of its entire lifecycle, protecting brand integrity and enhancing its value in the booming pre-owned market.</p>
-                    <div class="relative space-y-2">
-                        <div class="relative pl-8 step-line">
-                            <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-teal-400/10 border-2 border-teal-400 flex items-center justify-center font-header text-xl text-teal-300">1</div>
-                            <h5 class="font-bold text-lg text-white">Ethical Sourcing</h5>
-                            <p class="text-gray-400">Material origins and certifications are logged.</p>
-                        </div>
-                         <div class="relative pl-8 step-line">
-                            <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-teal-400/10 border-2 border-teal-400 flex items-center justify-center font-header text-xl text-teal-300">2</div>
-                            <h5 class="font-bold text-lg text-white">Artisanal Crafting</h5>
-                            <p class="text-gray-400">"As-built" data and artisan details are recorded.</p>
-                        </div>
-                         <div class="relative pl-8 step-line">
-                            <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-teal-400/10 border-2 border-teal-400 flex items-center justify-center font-header text-xl text-teal-300">3</div>
-                            <h5 class="font-bold text-lg text-white">Ownership History</h5>
-                            <p class="text-gray-400">Sales and ownership transfers are securely registered.</p>
-                        </div>
-                         <div class="relative pl-8">
-                            <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-teal-400/10 border-2 border-teal-400 flex items-center justify-center font-header text-xl text-teal-300">4</div>
-                            <h5 class="font-bold text-lg text-white">Service Lifecycle</h5>
-                            <p class="text-gray-400">All maintenance is added to the lifelong digital record.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="glass-card p-6 rounded-lg">
-                    <h4 class="font-header text-2xl font-bold text-white text-center">Holistic Business Advantage</h4>
-                    <p class="mt-2 text-gray-400 mb-4 text-center">The platform delivers a comprehensive, balanced improvement across all key business drivers, solidifying PRAVAQ's leadership in both craftsmanship and technology.</p>
-                    <div class="chart-container h-[400px]">
-                         <canvas id="holisticImprovementChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-    <footer class="mt-16 py-8 text-center border-t border-gray-800">
-        <p class="text-gray-500">&copy; 2025 PRAVAQ. Powered by the 3DEXPERIENCE Platform.</p>
-    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.320.0/dist/umd/lucide.min.js"></script>
 
     <script>
-        const chartTextColor = '#ccd6f6';
-        const chartGridColor = 'rgba(45, 212, 191, 0.1)';
-        const beforeColor = 'rgba(236, 72, 153, 0.7)';
-        const afterColor = 'rgba(45, 212, 191, 0.7)';
-        const beforeBorderColor = 'rgb(236, 72, 153)';
-        const afterBorderColor = 'rgb(45, 212, 191)';
+        window.addEventListener('load', () => {
+            let teamDataState = null, scheduleChart = null;
+            let currentModal = { type: null, memberId: null, projectId: null };
+            let confirmCallback = null;
+            let currentReportMemberId = null;
 
-        const tooltipTitleCallback = {
-            plugins: {
-                tooltip: {
-                    titleFont: { family: "'Roboto', sans-serif" },
-                    bodyFont: { family: "'Roboto', sans-serif" },
-                    callbacks: {
-                        title: function(tooltipItems) {
-                            const item = tooltipItems[0];
-                            let label = item.chart.data.labels[item.dataIndex];
-                            return Array.isArray(label) ? label.join(' ') : label;
+            const el = (id) => document.getElementById(id);
+            const loadingSpinner = el('loading-spinner'), appContainer = el('app-container'),
+                membersGrid = el('members-grid'), noMembersMessage = el('no-members-message'),
+                teamNameEl = el('team-name'), dashboardStatsGrid = el('dashboard-stats-grid'),
+                themeSwitcher = el('theme-switcher'), modal = el('modal'), modalContent = el('modal-content'),
+                modalTitle = el('modal-title'), modalInputsContainer = el('modal-inputs-container'),
+                modalForm = el('modal-form'), modalCloseBtn = el('modal-close-btn'),
+                modalCancelBtn = el('modal-cancel-btn'), confirmModal = el('confirm-modal'),
+                confirmModalContent = el('confirm-modal-content'), confirmTitle = el('confirm-title'), 
+                confirmText = el('confirm-text'), confirmActionBtn = el('confirm-action-btn'),
+                confirmCancelBtn = el('confirm-cancel-btn'), scheduleModal = el('schedule-modal'),
+                scheduleModalContent = el('schedule-modal-content'), scheduleModalTitle = el('schedule-modal-title'),
+                scheduleModalCloseBtn = el('schedule-modal-close-btn'), scheduleChartCanvas = el('schedule-chart-canvas'),
+                scheduleEmptyMessage = el('schedule-empty-message'), importJsonBtn = el('import-json-btn'),
+                exportJsonBtn = el('export-json-btn'), jsonFileInput = el('json-file-input'),
+                reportModal = el('report-modal'), reportModalContent = el('report-modal-content'), 
+                reportModalTitle = el('report-modal-title'), reportModalCloseBtn = el('report-modal-close-btn'),
+                reportTimeframeSelect = el('report-timeframe'), reportYearSelect = el('report-year'),
+                reportPeriodSelect = el('report-period'), reportContentContainer = el('report-content-container');
+
+            
+            const LEADERSHIP_TRAITS = ['Communication', 'Decision Making', 'Problem Solving', 'Adaptability', 'Mentorship', 'Initiative', 'Accountability'];
+
+            // --- Local Storage Data Management ---
+            const APP_STORAGE_KEY = 'teamPulseDashboardState';
+
+            function getInitialState() {
+                return {
+                    teamName: "EDU Team Dashboard",
+                    members: []
+                };
+            }
+
+            function loadStateFromLocalStorage() {
+                const savedState = localStorage.getItem(APP_STORAGE_KEY);
+                if (savedState) {
+                    let state = JSON.parse(savedState);
+                    // Migration for backward compatibility
+                    if (state.members) {
+                        state.members.forEach(member => {
+                            if (member.trainings && !member.idpItems) {
+                                member.idpItems = member.trainings.map(t => ({
+                                    id: t.id, competency: '', topic: t.name,
+                                    plannedHrs: t.duration, actualHrs: '', startDate: '', endDate: '',
+                                    status: t.status, trainer: '', comments: ''
+                                }));
+                                delete member.trainings;
+                            }
+                             (member.projects || []).forEach(p => {
+                                (p.tasks || []).forEach(t => { if(t.comments === undefined) t.comments = ''; });
+                                if (p.evaluatedTraits) {
+                                    p.traitsShown = [...p.evaluatedTraits];
+                                    delete p.evaluatedTraits;
+                                }
+                                if (!p.traitsShown) p.traitsShown = [];
+                                if (!p.traitsMissing) p.traitsMissing = [];
+                            });
+                        });
+                    }
+                    return state;
+                }
+                const initialState = getInitialState();
+                localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(initialState));
+                return initialState;
+            }
+
+            function saveStateToLocalStorage() {
+                localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(teamDataState));
+            }
+            
+            // --- Main Application Logic ---
+            function main() {
+                setupTheme();
+                teamDataState = loadStateFromLocalStorage();
+                renderApp();
+                loadingSpinner.style.display = 'none';
+                appContainer.classList.remove('hidden');
+                setupReportFilters();
+            }
+
+            function renderApp() {
+                if (!teamDataState) return;
+                teamNameEl.textContent = teamDataState.teamName;
+                renderDashboardStats();
+                noMembersMessage.classList.toggle('hidden', teamDataState.members.length > 0);
+                membersGrid.innerHTML = teamDataState.members.map(createMemberCard).join('');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+
+            const isProjectComplete = project => (project.tasks?.length > 0 && project.tasks.every(t => t.status === 'Done'));
+
+            const calculateActiveMemberWorkload = member => (member.projects || []).reduce((total, p) => {
+                const projectIsDone = isProjectComplete(p);
+                const projectWorkload = projectIsDone ? 0 : parseFloat(p.workload) || 0;
+                const tasksWorkload = (p.tasks || []).reduce((taskTotal, task) => {
+                    return task.status !== 'Done' ? taskTotal + (parseFloat(task.workload) || 0) : taskTotal;
+                }, 0);
+                return total + projectWorkload + tasksWorkload;
+            }, 0);
+            
+            function calculateMemberAverageRating(member) {
+                const ratedProjects = (member.projects || []).filter(p => p.rating && p.rating > 0);
+                if (ratedProjects.length === 0) return { avg: 0, count: 0 };
+                const totalRating = ratedProjects.reduce((sum, p) => sum + p.rating, 0);
+                return {
+                    avg: totalRating / ratedProjects.length,
+                    count: ratedProjects.length
+                };
+            }
+
+            function renderDashboardStats() {
+                const members = teamDataState.members;
+                const allIdpItems = members.flatMap(m => m.idpItems || []);
+                const completedIdpItems = allIdpItems.filter(t => t?.status === 'Done').length;
+                const totalProjects = members.reduce((sum, m) => sum + (m.projects?.length || 0), 0);
+                const totalActiveWorkloadSum = members.reduce((sum, m) => sum + calculateActiveMemberWorkload(m), 0);
+                const overallUtilization = members.length > 0 ? (totalActiveWorkloadSum / members.length).toFixed(0) : 0;
+                dashboardStatsGrid.innerHTML = `
+                    ${createStatCardHtml('users', 'Team Members', members.length, 'Active collaborators')}
+                    ${createStatCardHtml('award', 'IDP Completion', allIdpItems.length > 0 ? `${Math.round((completedIdpItems/allIdpItems.length)*100)}%` : '0%', `${completedIdpItems} / ${allIdpItems.length} items`)}
+                    ${createStatCardHtml('briefcase', 'Active Projects', totalProjects, 'Across the team')}
+                    ${createStatCardHtml('pie-chart', 'Active Utilization', `${overallUtilization}%`, 'Based on unfinished tasks')}
+                `;
+            }
+            const createStatCardHtml = (icon, title, value, subtext) => `<div class="glass-card p-6 flex items-center space-x-4"><div class="p-3 bg-black/10 rounded-full"><i data-lucide="${icon}" class="w-6 h-6" style="color: var(--text-primary);"></i></div><div><p class="text-sm" style="color: var(--text-secondary);">${title}</p><p class="text-2xl font-bold" style="color: var(--text-primary);">${value}</p><p class="text-xs" style="color: var(--text-muted);">${subtext}</p></div></div>`;
+            
+            function createMemberCard(member) {
+                const memberWorkload = calculateActiveMemberWorkload(member);
+                const workloadColor = memberWorkload > 100 ? 'bg-red-500' : memberWorkload > 85 ? 'bg-yellow-500' : 'bg-green-500';
+                const ratingInfo = calculateMemberAverageRating(member);
+
+                return `
+                <div class="glass-card p-6 flex flex-col gap-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <input type="text" value="${member.name}" class="editable-field member-detail-input text-xl font-bold w-full" data-field="name" data-member-id="${member.id}" style="color: var(--text-primary);" />
+                                ${ratingInfo.count > 0 ? `<div class="flex items-center gap-1 text-sm font-bold" style="color: var(--star-active);" title="Avg. rating from ${ratingInfo.count} projects"><i data-lucide="star" class="w-4 h-4 fill-current"></i> ${ratingInfo.avg.toFixed(1)}</div>` : ''}
+                            </div>
+                             <input type="text" value="${member.role}" class="editable-field member-detail-input text-sm font-medium w-full" data-field="role" data-member-id="${member.id}" style="color: var(--interactive-accent);" />
+                        </div>
+                        <button class="delete-member-btn hover:text-red-500" data-member-id="${member.id}" style="color: var(--text-muted);"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1 text-sm"><span class="font-medium" style="color: var(--text-secondary);">Active Workload</span><span class="font-bold" style="color: var(--text-primary);">${memberWorkload.toFixed(0)}%</span></div>
+                        <div class="w-full bg-black/10 rounded-full h-2.5"><div class="${workloadColor} h-2.5 rounded-full transition-all duration-500" style="width: ${Math.min(memberWorkload, 100)}%"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-2"><h4 class="font-semibold flex items-center" style="color: var(--text-primary);"><i data-lucide="briefcase" class="w-5 h-5 mr-2" style="color: var(--text-secondary);"></i>Assigned Projects</h4><button class="add-project-btn" data-member-id="${member.id}" style="color: var(--interactive-accent);"><i data-lucide="plus-circle" class="w-5 h-5"></i></button></div>
+                        <div class="space-y-4 project-list">${(member.projects || []).map(p => createProjectHtml(p, member.id)).join('') || `<p class="text-xs italic" style="color: var(--text-muted);">No projects assigned.</p>`}</div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-2"><h4 class="font-semibold flex items-center" style="color: var(--text-primary);"><i data-lucide="user-check" class="w-5 h-5 mr-2" style="color: var(--text-secondary);"></i>Individual Development Plan</h4><button class="add-idp-btn" data-member-id="${member.id}" style="color: var(--interactive-accent);"><i data-lucide="plus-circle" class="w-5 h-5"></i></button></div>
+                        <div class="space-y-3 idp-list">${(member.idpItems || []).map(t => createIdpItemHtml(t, member.id)).join('') || `<p class="text-xs italic" style="color: var(--text-muted);">No IDP items logged.</p>`}</div>
+                    </div>
+                    <div class="mt-2 grid grid-cols-2 gap-4">
+                        <button class="view-schedule-btn w-full glass-card inline-flex items-center justify-center px-4 py-2 font-semibold rounded-lg shadow-md hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-white/50" data-member-id="${member.id}"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i> Schedule</button>
+                        <button class="view-report-btn w-full glass-card inline-flex items-center justify-center px-4 py-2 font-semibold rounded-lg shadow-md hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-white/50" data-member-id="${member.id}"><i data-lucide="clipboard-list" class="w-5 h-5 mr-2"></i> Report</button>
+                    </div>
+                </div>`;
+            }
+
+            function createProjectHtml(proj, memberId) {
+                const projectIsDone = isProjectComplete(proj);
+                const priorityColors = { High: 'bg-red-500/20 text-red-800', Medium: 'bg-yellow-500/20 text-yellow-800', Low: 'bg-blue-500/20 text-blue-800' };
+                const traitsShown = proj.traitsShown || [];
+                const traitsMissing = proj.traitsMissing || [];
+
+                return `<div class="p-4 rounded-lg bg-black/5 border border-black/10 project-container">
+                    <div class="flex justify-between items-center gap-2 flex-wrap">
+                        <h5 class="font-bold flex-grow" style="color: var(--text-primary);">${proj.name}</h5>
+                        <select class="priority-select text-xs font-bold px-2 py-1 rounded-md border-transparent focus:ring-2 focus:ring-indigo-400 ${priorityColors[proj.priority || 'Medium']}" data-project-id="${proj.id}" data-member-id="${memberId}">
+                            <option value="Low" ${proj.priority === 'Low' ? 'selected' : ''}>Low</option>
+                            <option value="Medium" ${!proj.priority || proj.priority === 'Medium' ? 'selected' : ''}>Medium</option>
+                            <option value="High" ${proj.priority === 'High' ? 'selected' : ''}>High</option>
+                        </select>
+                        <div class="flex items-center gap-1"><input type="number" placeholder="%" value="${proj.workload || ''}" class="number-input project-workload-input w-12 text-center font-semibold bg-white/50 border border-transparent rounded focus:outline-none focus:ring-2 focus:ring-indigo-400" data-project-id="${proj.id}" data-member-id="${memberId}"></div>
+                        <div class="flex items-center gap-2 ml-1"><button class="add-task-btn" data-project-id="${proj.id}" data-member-id="${memberId}" style="color: var(--interactive-accent);"><i data-lucide="plus" class="w-5 h-5"></i></button></div>
+                    </div>
+                    <div class="mt-3 text-xs grid grid-cols-2 gap-4" style="color: var(--text-muted);">
+                        <label class="flex items-center gap-1">Start: <input type="date" value="${proj.startDate || ''}" class="project-date-input bg-transparent rounded px-1 w-full" data-date-type="startDate" data-project-id="${proj.id}" data-member-id="${memberId}"></label>
+                        <label class="flex items-center gap-1">End: <input type="date" value="${proj.endDate || ''}" class="project-date-input bg-transparent rounded px-1 w-full" data-date-type="endDate" data-project-id="${proj.id}" data-member-id="${memberId}"></label>
+                    </div>
+                    <div class="mt-2 space-y-2 task-list">${(proj.tasks || []).map(t => createTaskHtml(t, proj.id, memberId)).join('') || `<p class="text-xs italic mt-2" style="color: var(--text-muted);">No tasks yet.</p>`}</div>
+                    <div class="mt-3 border-t border-black/10 pt-3 ${projectIsDone ? '' : 'hidden'}">
+                        <div class="flex justify-between items-center mb-2">
+                           <h6 class="text-sm font-semibold" style="color: var(--text-secondary);">Project Rating</h6>
+                           <div class="star-rating flex items-center" data-project-id="${proj.id}" data-member-id="${memberId}">
+                                ${[1,2,3,4,5].map(i => `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer" data-rating-value="${i}" style="color: ${i <= (proj.rating || 0) ? 'var(--star-active)' : 'var(--star-inactive)'}; ${i <= (proj.rating || 0) ? 'fill: var(--star-active);' : ''}"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`).join('')}
+                           </div>
+                        </div>
+                         <div class="mb-3 grid grid-cols-2 gap-4">
+                            <div>
+                                <h6 class="text-sm font-semibold mb-2" style="color: var(--text-secondary);">Traits Shown</h6>
+                                <div class="space-y-1 text-xs">
+                                    ${LEADERSHIP_TRAITS.map(trait => `
+                                        <label class="flex items-center gap-2">
+                                            <input type="checkbox" class="trait-checkbox rounded" data-trait-type="shown" data-trait-name="${trait}" data-project-id="${proj.id}" data-member-id="${memberId}" ${traitsShown.includes(trait) ? 'checked' : ''}>
+                                            ${trait}
+                                        </label>
+                                    `).join('')}
+                                </div>
+                            </div>
+                             <div>
+                                <h6 class="text-sm font-semibold mb-2" style="color: var(--text-secondary);">Traits Missing</h6>
+                                <div class="space-y-1 text-xs">
+                                    ${LEADERSHIP_TRAITS.map(trait => `
+                                        <label class="flex items-center gap-2">
+                                            <input type="checkbox" class="trait-checkbox rounded" data-trait-type="missing" data-trait-name="${trait}" data-project-id="${proj.id}" data-member-id="${memberId}" ${traitsMissing.includes(trait) ? 'checked' : ''}>
+                                            ${trait}
+                                        </label>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        <textarea class="project-comments-textarea w-full text-sm bg-white/50 border border-transparent rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" placeholder="Add project comments..." data-project-id="${proj.id}" data-member-id="${memberId}">${proj.comments || ''}</textarea>
+                    </div>
+                </div>`;
+            }
+
+            function createTaskHtml(task, projectId, memberId) {
+                const statusClasses = { 'To Do': 'bg-gray-400/50 text-gray-800', 'In Progress': 'bg-blue-400/50 text-blue-800', 'Done': 'bg-green-400/50 text-green-800' };
+                const nextStatus = { 'To Do': 'In Progress', 'In Progress': 'Done', 'Done': 'To Do' };
+                return `<div class="p-3 rounded-md bg-white/50 border border-black/10 mt-2">
+                    <div class="flex justify-between items-center gap-2">
+                        <p class="flex-grow text-sm" style="color: var(--text-secondary);">${task.text}</p>
+                        <input type="number" placeholder="%" value="${task.workload || ''}" class="number-input task-workload-input w-12 text-center bg-white/80 border border-transparent rounded focus:outline-none focus:ring-1 focus:ring-indigo-400" data-task-id="${task.id}" data-project-id="${projectId}" data-member-id="${memberId}">
+                        <button class="change-status-btn text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap ${statusClasses[task.status]}" data-next-status="${nextStatus[task.status]}" data-task-id="${task.id}" data-project-id="${projectId}" data-member-id="${memberId}">${task.status}</button>
+                    </div>
+                    <div class="mt-2 text-xs flex justify-between gap-2" style="color: var(--text-muted);">
+                        <label class="flex items-center gap-1 text-xs">Start: <input type="date" value="${task.startDate || ''}" class="task-date-input bg-transparent rounded px-1" data-date-type="startDate" data-task-id="${task.id}" data-project-id="${projectId}" data-member-id="${memberId}"></label>
+                        <label class="flex items-center gap-1 text-xs">End: <input type="date" value="${task.endDate || ''}" class="task-date-input bg-transparent rounded px-1" data-date-type="endDate" data-task-id="${task.id}" data-project-id="${projectId}" data-member-id="${memberId}"></label>
+                    </div>
+                    <textarea class="task-comments-textarea mt-2 w-full text-xs bg-white/50 border border-transparent rounded p-2 focus:outline-none focus:ring-1 focus:ring-indigo-400" placeholder="Add task comments..." data-task-id="${task.id}" data-project-id="${projectId}" data-member-id="${memberId}">${task.comments || ''}</textarea>
+                </div>`;
+            }
+            
+            function createIdpItemHtml(item, memberId) {
+                return `<div class="p-4 rounded-lg bg-black/5 border border-black/10 idp-item-container">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                        <label class="font-semibold col-span-full">Topic: <input type="text" value="${item.topic || ''}" class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20" data-field="topic" data-idp-id="${item.id}" data-member-id="${memberId}"></label>
+                        <label class="font-semibold">Competency: <input type="text" value="${item.competency || ''}" class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20" data-field="competency" data-idp-id="${item.id}" data-member-id="${memberId}"></label>
+                        <label class="font-semibold">Trainer: <input type="text" value="${item.trainer || ''}" class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20" data-field="trainer" data-idp-id="${item.id}" data-member-id="${memberId}"></label>
+                        <label class="font-semibold">Planned Hrs: <input type="number" value="${item.plannedHrs || ''}" class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20" data-field="plannedHrs" data-idp-id="${item.id}" data-member-id="${memberId}"></label>
+                        <label class="font-semibold">Actual Hrs: <input type="number" value="${item.actualHrs || ''}" class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20" data-field="actualHrs" data-idp-id="${item.id}" data-member-id="${memberId}"></label>
+                        <label class="font-semibold">Start: <input type="date" value="${item.startDate || ''}" class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20" data-field="startDate" data-idp-id="${item.id}" data-member-id="${memberId}"></label>
+                        <label class="font-semibold">End: <input type="date" value="${item.endDate || ''}" class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20" data-field="endDate" data-idp-id="${item.id}" data-member-id="${memberId}"></label>
+                        <div class="col-span-full"><label class="font-semibold">Status: <select class="idp-status-select bg-transparent rounded px-1 w-full" data-idp-id="${item.id}" data-member-id="${memberId}">${['Assigned', 'In Progress', 'Done'].map(s => `<option value="${s}" ${item.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label></div>
+                        <div class="col-span-full"><label class="font-semibold">Comments: <textarea class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20 text-xs" data-field="comments" data-idp-id="${item.id}" data-member-id="${memberId}">${item.comments || ''}</textarea></label></div>
+                    </div>
+                </div>`;
+            }
+
+
+            function handleGenericUpdate(updateFn) {
+                if (!teamDataState) return;
+                teamDataState = updateFn(teamDataState);
+                saveStateToLocalStorage();
+                renderApp();
+            }
+            
+            function handleDeleteMember(button) {
+                const memberIdToDelete = Number(button.dataset.memberId);
+                showConfirmModal(
+                    'Delete Member?',
+                    'Are you sure you want to delete this team member and all their data? This action cannot be undone.',
+                    'Delete',
+                    () => {
+                        handleGenericUpdate(d => {
+                            d.members = d.members.filter(m => m.id !== memberIdToDelete);
+                            return d;
+                        });
+                    }
+                );
+            }
+
+            document.body.addEventListener('click', e => {
+                const button = e.target.closest('button');
+                const star = e.target.closest('.star-rating svg');
+                if (button) {
+                    if (button.matches('#add-member-btn')) { showModal('member'); return; }
+                    if (button.matches('.delete-member-btn')) { handleDeleteMember(button); return; }
+                    if (button.matches('.view-schedule-btn')) { renderScheduleChart(button.dataset.memberId); return; }
+                    if (button.matches('.view-report-btn')) { showReportModal(button.dataset.memberId); return; }
+                    const { memberId, projectId } = button.dataset;
+                    if (button.matches('.add-project-btn')) showModal('project', memberId);
+                    if (button.matches('.add-idp-btn')) showModal('idp', memberId);
+                    if (button.matches('.add-task-btn')) showModal('task', memberId, projectId);
+                    if (button.matches('.change-status-btn')) handleStatusChange(button);
+                }
+                if (star) {
+                    handleRatingChange(star);
+                }
+            });
+
+            document.body.addEventListener('change', e => { 
+                if (e.target.matches('.idp-status-select')) handleIdpStatusChange(e.target); 
+                if (e.target.matches('.priority-select')) handlePriorityChange(e.target);
+                if (e.target.matches('.trait-checkbox')) handleTraitChange(e.target);
+            });
+            document.body.addEventListener('blur', e => {
+                const { target } = e;
+                if (target.matches('.project-workload-input')) handleProjectWorkloadChange(target);
+                if (target.matches('.task-workload-input')) handleTaskWorkloadChange(target);
+                if (target.matches('.idp-detail-input')) handleIdpDetailChange(target);
+                if (target.matches('.project-date-input')) handleProjectDateChange(target);
+                if (target.matches('.task-date-input')) handleTaskDateChange(target);
+                if (target.matches('.project-comments-textarea')) handleCommentsChange(target);
+                 if (target.matches('.task-comments-textarea')) handleTaskCommentsChange(target);
+                if (target.matches('.member-detail-input')) handleMemberDetailChange(target);
+            }, true);
+            
+            const getNumericValue = (input) => (v => isNaN(v) ? '' : v)(parseFloat(input.value));
+            const handleProjectWorkloadChange = i => handleGenericUpdate(d => { const p = d.members.find(m=>m.id==i.dataset.memberId)?.projects.find(p=>p.id==i.dataset.projectId); if(p) p.workload = getNumericValue(i); return d; });
+            const handleTaskWorkloadChange = i => handleGenericUpdate(d => { const t = d.members.find(m=>m.id==i.dataset.memberId)?.projects.find(p=>p.id==i.dataset.projectId)?.tasks.find(t=>t.id==i.dataset.taskId); if(t) t.workload = getNumericValue(i); return d; });
+            const handleIdpStatusChange = s => handleGenericUpdate(d => { const item = d.members.find(m=>m.id==s.dataset.memberId)?.idpItems.find(item=>item.id==s.dataset.idpId); if(item) item.status = s.value; return d; });
+            const handleProjectDateChange = i => handleGenericUpdate(d => { const p = d.members.find(m=>m.id==i.dataset.memberId)?.projects.find(p=>p.id==i.dataset.projectId); if(p) p[i.dataset.dateType] = i.value; return d; });
+            const handleTaskDateChange = i => handleGenericUpdate(d => { const t = d.members.find(m=>m.id==i.dataset.memberId)?.projects.find(p=>p.id==i.dataset.projectId)?.tasks.find(t=>t.id==i.dataset.taskId); if(t) t[i.dataset.dateType] = i.value; return d; });
+            const handleStatusChange = b => handleGenericUpdate(d => { const t = d.members.find(m=>m.id==b.dataset.memberId)?.projects.find(p=>p.id==b.dataset.projectId)?.tasks.find(t=>t.id==b.dataset.taskId); if(t) t.status = b.dataset.nextStatus; return d; });
+            const handlePriorityChange = s => handleGenericUpdate(d => { const p = d.members.find(m => m.id == s.dataset.memberId)?.projects.find(p => p.id == s.dataset.projectId); if (p) p.priority = s.value; return d; });
+            const handleRatingChange = s => handleGenericUpdate(d => { const p = d.members.find(m => m.id == s.parentElement.dataset.memberId)?.projects.find(p => p.id == s.parentElement.dataset.projectId); if (p) p.rating = Number(s.dataset.ratingValue); return d; });
+            const handleCommentsChange = t => handleGenericUpdate(d => { const p = d.members.find(m => m.id == t.dataset.memberId)?.projects.find(p => p.id == t.dataset.projectId); if (p) p.comments = t.value; return d; });
+            const handleTaskCommentsChange = t => handleGenericUpdate(d => { const task = d.members.find(m=>m.id==t.dataset.memberId)?.projects.find(p=>p.id==t.dataset.projectId)?.tasks.find(task=>task.id==t.dataset.taskId); if (task) task.comments = t.value; return d; });
+            const handleTraitChange = c => handleGenericUpdate(d => {
+                const p = d.members.find(m => m.id == c.dataset.memberId)?.projects.find(p => p.id == c.dataset.projectId);
+                if (p) {
+                    const traitType = c.dataset.traitType === 'shown' ? 'traitsShown' : 'traitsMissing';
+                    const otherTraitType = c.dataset.traitType === 'shown' ? 'traitsMissing' : 'traitsShown';
+                    p[traitType] = p[traitType] || [];
+                    p[otherTraitType] = p[otherTraitType] || [];
+
+                    const traitName = c.dataset.traitName;
+                    
+                    if (c.checked) {
+                        if (!p[traitType].includes(traitName)) p[traitType].push(traitName);
+                        // A trait cannot be both shown and missing
+                        p[otherTraitType] = p[otherTraitType].filter(t => t !== traitName);
+                    } else {
+                        p[traitType] = p[traitType].filter(t => t !== traitName);
+                    }
+                }
+                return d;
+            });
+            const handleMemberDetailChange = i => handleGenericUpdate(d => {
+                const member = d.members.find(m => m.id == i.dataset.memberId);
+                if(member) member[i.dataset.field] = i.value;
+                return d;
+            });
+             const handleIdpDetailChange = i => handleGenericUpdate(d => {
+                const item = d.members.find(m => m.id == i.dataset.memberId)?.idpItems.find(item => item.id == i.dataset.idpId);
+                if(item) item[i.dataset.field] = i.value;
+                return d;
+            });
+
+            function showModal(type, memberId = null, projectId = null) {
+                currentModal = { type, memberId, projectId };
+                let inputsHtml = '';
+                if (type === 'member') {
+                    modalTitle.textContent = 'Add New Member';
+                    inputsHtml = `<input type="text" id="modal-member-name" placeholder="Member Name" required class="w-full px-3 py-2 border border-black/20 bg-white/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-500">
+                                  <input type="text" id="modal-member-role" placeholder="Member Role" required class="w-full px-3 py-2 border border-black/20 bg-white/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-500">`;
+                } else if (type === 'project' || type === 'task') {
+                    modalTitle.textContent = `Add New ${type === 'project' ? 'Project' : 'Task'}`;
+                    inputsHtml = `<input type="text" id="modal-item-name" placeholder="${type === 'project' ? 'Project' : 'Task'} Name" required class="w-full px-3 py-2 border border-black/20 bg-white/50 rounded-md">
+                                  <div class="grid grid-cols-2 gap-4"><label>Start Date <input type="date" id="modal-start-date" class="w-full mt-1 px-3 py-2 border border-black/20 bg-white/50 rounded-md"></label><label>End Date <input type="date" id="modal-end-date" class="w-full mt-1 px-3 py-2 border border-black/20 bg-white/50 rounded-md"></label></div>`;
+                } else if (type === 'idp') {
+                    modalTitle.textContent = 'Add IDP Item';
+                    inputsHtml = `<input type="text" id="modal-idp-topic" placeholder="Topic / Goal" required class="w-full px-3 py-2 border border-black/20 bg-white/50 rounded-md">
+                                  <input type="text" id="modal-idp-competency" placeholder="Competency" class="w-full px-3 py-2 border border-black/20 bg-white/50 rounded-md">
+                                  <input type="text" id="modal-idp-trainer" placeholder="Trainer" class="w-full px-3 py-2 border border-black/20 bg-white/50 rounded-md">
+                                  <input type="number" id="modal-idp-plannedHrs" placeholder="Planned Hours" class="w-full px-3 py-2 border border-black/20 bg-white/50 rounded-md">
+                                  `;
+                }
+                modalInputsContainer.innerHTML = inputsHtml;
+                modal.classList.remove('pointer-events-none', 'opacity-0');
+                modalContent.classList.remove('-translate-y-10');
+                modalInputsContainer.querySelector('input')?.focus();
+            }
+
+            function hideModal() { modal.classList.add('pointer-events-none', 'opacity-0'); modalContent.classList.add('-translate-y-10'); }
+            function showConfirmModal(title, text, actionText, onConfirm) {
+                confirmTitle.textContent = title;
+                confirmText.textContent = text;
+                confirmActionBtn.textContent = actionText;
+                confirmCallback = onConfirm;
+                confirmModal.classList.remove('pointer-events-none', 'opacity-0'); 
+                confirmModalContent.classList.remove('-translate-y-10'); 
+            }
+            function hideConfirmModal() { 
+                confirmModal.classList.add('pointer-events-none', 'opacity-0'); 
+                confirmModalContent.classList.add('-translate-y-10');
+                confirmCallback = null; 
+            }
+
+            modalForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const { type, memberId, projectId } = currentModal;
+                handleGenericUpdate(d => {
+                    if (type === 'member') {
+                        const name = el('modal-member-name').value.trim();
+                        const role = el('modal-member-role').value.trim();
+                        if (name && role) d.members.push({ id: Date.now(), name, role, projects: [], idpItems: [] });
+                    } else if (type === 'idp') {
+                        const member = d.members.find(m => m.id == memberId);
+                        if (member) {
+                            if (!member.idpItems) member.idpItems = [];
+                            member.idpItems.push({
+                                id: Date.now(),
+                                topic: el('modal-idp-topic').value,
+                                competency: el('modal-idp-competency').value,
+                                plannedHrs: el('modal-idp-plannedHrs').value,
+                                trainer: el('modal-idp-trainer').value,
+                                actualHrs: '', startDate: '', endDate: '', status: 'Assigned', comments: ''
+                            });
                         }
+                    } else {
+                         const name = el('modal-item-name').value.trim(); if (!name) return d;
+                        const startDate = el('modal-start-date')?.value, endDate = el('modal-end-date')?.value;
+                        if (type === 'project') d.members.find(m => m.id == memberId)?.projects.push({ id: Date.now(), name, workload: '', tasks: [], startDate, endDate, priority: 'Medium', rating: 0, comments: '', traitsShown: [], traitsMissing: [] });
+                        if (type === 'task') d.members.find(m => m.id == memberId)?.projects.find(p => p.id == projectId)?.tasks.push({ id: Date.now(), text: name, status: 'To Do', workload: '', startDate, endDate, comments: '' });
                     }
-                },
-                legend: {
-                    labels: {
-                        color: chartTextColor,
-                        font: { family: "'Roboto', sans-serif", size: 12 }
-                    }
+                    return d;
+                });
+                hideModal();
+            });
+            
+            modalCloseBtn.addEventListener('click', hideModal);
+            modalCancelBtn.addEventListener('click', hideConfirmModal);
+            confirmActionBtn.addEventListener('click', () => {
+                if (confirmCallback) confirmCallback();
+                hideConfirmModal();
+            });
+
+            // --- JSON Import/Export ---
+            exportJsonBtn.addEventListener('click', () => {
+                const dataStr = JSON.stringify(teamDataState, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                const exportFileDefaultName = 'dashboard-backup.json';
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            });
+
+            importJsonBtn.addEventListener('click', () => jsonFileInput.click());
+            jsonFileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0]; if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const importedState = JSON.parse(event.target.result);
+                        showConfirmModal('Import Data?','This will overwrite all current dashboard data. Are you sure?','Import',() => {
+                            teamDataState = importedState;
+                            saveStateToLocalStorage();
+                            renderApp();
+                        });
+                    } catch (error) { alert('Error: Invalid JSON file.'); }
+                };
+                reader.readAsText(file);
+                e.target.value = null; 
+            });
+
+            // --- Schedule Modal ---
+            scheduleModalCloseBtn.addEventListener('click', () => { scheduleModal.classList.add('pointer-events-none', 'opacity-0'); scheduleModalContent.classList.add('-translate-y-10'); });
+
+            function renderScheduleChart(memberId) {
+                const member = teamDataState.members.find(m => m.id == memberId); if (!member) return;
+                scheduleModalTitle.textContent = `Task Schedule for ${member.name}`;
+                const tasksForChart = (member.projects || []).flatMap(p => (p.tasks || []).map(t => ({...t, projectName: p.name}))).filter(t => t.startDate && t.endDate);
+                scheduleEmptyMessage.classList.toggle('hidden', tasksForChart.length > 0);
+                if (scheduleChart) scheduleChart.destroy();
+                if (tasksForChart.length > 0) {
+                    const oneDay = 24*60*60*1000;
+                    const labels = tasksForChart.map(t => `${t.text} (${t.projectName})`);
+                    const data = tasksForChart.map(t => Math.round(Math.abs((new Date(t.startDate) - new Date(t.endDate)) / oneDay)) + 1);
+                    const statusColors = { 'To Do': 'rgba(156, 163, 175, 0.7)', 'In Progress': 'rgba(96, 165, 250, 0.7)', 'Done': 'rgba(74, 222, 128, 0.7)' };
+                    const backgroundColors = tasksForChart.map(t => statusColors[t.status] || 'rgba(203, 213, 225, 0.7)');
+                    scheduleChart = new Chart(scheduleChartCanvas, {
+                        type: 'bar',
+                        data: { labels, datasets: [{ label: 'Task Duration (days)', data, backgroundColor: backgroundColors, borderColor: backgroundColors.map(c => c.replace('0.7', '1')), borderWidth: 1 }] },
+                        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true, title: { display: true, text: 'Duration in Days' } }, y: { ticks: { font: { size: 10 } } } }, plugins: { legend: { display: false } } }
+                    });
                 }
-            },
-            scales: {
-                y: {
-                    ticks: { color: chartTextColor, font: { family: "'Roboto', sans-serif" } },
-                    grid: { color: chartGridColor }
-                },
-                x: {
-                    ticks: { color: chartTextColor, font: { family: "'Roboto', sans-serif" } },
-                    grid: { color: chartGridColor }
-                }
+                scheduleModal.classList.remove('pointer-events-none', 'opacity-0');
+                scheduleModalContent.classList.remove('-translate-y-10');
             }
-        };
-
-        new Chart(document.getElementById('rejectionRateChart'), {
-            type: 'bar',
-            data: {
-                labels: ['Rejection Rate'],
-                datasets: [
-                    { label: 'Before', data: [35], backgroundColor: beforeColor, borderColor: beforeBorderColor, borderWidth: 1 },
-                    { label: 'After', data: [4], backgroundColor: afterColor, borderColor: afterBorderColor, borderWidth: 1 }
-                ]
-            },
-            options: { ...tooltipTitleCallback, responsive: true, maintainAspectRatio: false }
-        });
-
-        new Chart(document.getElementById('prototypingCycleChart'), {
-            type: 'bar',
-            data: {
-                labels: ['Prototyping Time (Cycles)'],
-                datasets: [
-                    { label: 'Before', data: [100], backgroundColor: beforeColor, borderColor: beforeBorderColor, borderWidth: 1 },
-                    { label: 'After (Reduced by 60%)', data: [40], backgroundColor: afterColor, borderColor: afterBorderColor, borderWidth: 1 }
-                ]
-            },
-            options: { ...tooltipTitleCallback, responsive: true, maintainAspectRatio: false }
-        });
-
-        new Chart(document.getElementById('qualityKpiChart'), {
-            type: 'bar',
-            data: {
-                labels: ['Part Rejection Rate', 'Warranty Claims'],
-                datasets: [
-                    { label: 'Before (Higher is worse)', data: [35, 100], backgroundColor: beforeColor },
-                    { label: 'After (Lower is better)', data: [4, 47.5], backgroundColor: afterColor }
-                ]
-            },
-            options: { ...tooltipTitleCallback, responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
-        });
-
-        new Chart(document.getElementById('speedKpiChart'), {
-            type: 'bar',
-            data: {
-                labels: ['Prototyping Cycles', 'CNC Programming Time'],
-                datasets: [
-                    { label: 'Before (Longer Time)', data: [100, 100], backgroundColor: beforeColor },
-                    { label: 'After (Shorter Time)', data: [40, 20], backgroundColor: afterColor }
-                ]
-            },
-            options: { ...tooltipTitleCallback, responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
-        });
-
-        new Chart(document.getElementById('efficiencyKpiChart'), {
-            type: 'bar',
-            data: {
-                labels: ['Machine Setup Time', 'Maintenance Costs'],
-                datasets: [
-                    { label: 'Before (Higher Cost/Time)', data: [100, 100], backgroundColor: beforeColor },
-                    { label: 'After (Lower Cost/Time)', data: [45, 65], backgroundColor: afterColor }
-                ]
-            },
-            options: { ...tooltipTitleCallback, responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
-        });
-        
-        new Chart(document.getElementById('holisticImprovementChart'), {
-            type: 'radar',
-            data: {
-                labels: ['Quality', 'Innovation Speed', 'Efficiency', 'Brand Integrity', 'Sustainability'],
-                datasets: [{
-                    label: 'PRAVAQ Advantage',
-                    data: [95, 85, 90, 98, 80],
-                    fill: true,
-                    backgroundColor: 'rgba(45, 212, 191, 0.2)',
-                    borderColor: 'rgb(45, 212, 191)',
-                    pointBackgroundColor: 'rgb(45, 212, 191)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgb(45, 212, 191)'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    r: {
-                        angleLines: { color: chartGridColor },
-                        grid: { color: chartGridColor },
-                        pointLabels: {
-                            font: { size: 12, family: "'Roboto', sans-serif" },
-                            color: chartTextColor
-                        },
-                        ticks: {
-                            backdropColor: 'transparent',
-                            color: chartTextColor,
-                            stepSize: 20
-                        },
-                        suggestedMin: 0,
-                        suggestedMax: 100
-                    }
-                },
-                plugins: {
-                     legend: { display: false },
-                     tooltip: tooltipTitleCallback.plugins.tooltip
-                }
+            
+            // --- Report Modal ---
+            reportModalCloseBtn.addEventListener('click', () => { reportModal.classList.add('pointer-events-none', 'opacity-0'); reportModalContent.classList.add('-translate-y-10'); });
+            
+            function setupReportFilters() {
+                 const currentYear = new Date().getFullYear();
+                 for (let i = currentYear - 5; i <= currentYear + 5; i++) {
+                     const option = document.createElement('option');
+                     option.value = i;
+                     option.textContent = i;
+                     if(i === currentYear) option.selected = true;
+                     reportYearSelect.appendChild(option);
+                 }
+                 updateReportPeriodFilter();
+                 reportTimeframeSelect.addEventListener('change', updateReportPeriodFilter);
+                 reportYearSelect.addEventListener('change', generateAndRenderReport);
+                 reportPeriodSelect.addEventListener('change', generateAndRenderReport);
             }
-        });
 
+            function updateReportPeriodFilter() {
+                reportPeriodSelect.innerHTML = '';
+                const timeframe = reportTimeframeSelect.value;
+                if(timeframe === 'monthly') {
+                    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                    months.forEach((month, index) => {
+                        const option = document.createElement('option');
+                        option.value = index;
+                        option.textContent = month;
+                        if(index === new Date().getMonth()) option.selected = true;
+                        reportPeriodSelect.appendChild(option);
+                    });
+                } else { // quarterly
+                    ['Q1', 'Q2', 'Q3', 'Q4'].forEach((q, index) => {
+                        const option = document.createElement('option');
+                        option.value = index;
+                        option.textContent = q;
+                         if(index === Math.floor(new Date().getMonth() / 3)) option.selected = true;
+                        reportPeriodSelect.appendChild(option);
+                    });
+                }
+                generateAndRenderReport();
+            }
+
+            function generateAndRenderReport() {
+                if (!currentReportMemberId) return;
+                const member = teamDataState.members.find(m => m.id == currentReportMemberId);
+                if (!member) return;
+
+                const year = parseInt(reportYearSelect.value);
+                const period = parseInt(reportPeriodSelect.value);
+                const timeframe = reportTimeframeSelect.value;
+
+                let startDate, endDate;
+                if (timeframe === 'monthly') {
+                    startDate = new Date(year, period, 1);
+                    endDate = new Date(year, period + 1, 0);
+                } else { // quarterly
+                    startDate = new Date(year, period * 3, 1);
+                    endDate = new Date(year, period * 3 + 3, 0);
+                }
+
+                const projectsInPeriod = (member.projects || []).filter(p => p.endDate && new Date(p.endDate) >= startDate && new Date(p.endDate) <= endDate);
+                const tasksInPeriod = (member.projects || []).flatMap(p => p.tasks || []).filter(t => t.endDate && new Date(t.endDate) >= startDate && new Date(t.endDate) <= endDate);
+                const idpInPeriod = (member.idpItems || []).filter(i => i.endDate && new Date(i.endDate) >= startDate && new Date(i.endDate) <= endDate);
+
+                const completedProjects = projectsInPeriod.filter(isProjectComplete);
+                const completedTasks = tasksInPeriod.filter(t => t.status === 'Done');
+                const completedIdps = idpInPeriod.filter(i => i.status === 'Done');
+
+                const avgRating = calculateMemberAverageRating({ projects: completedProjects });
+
+                reportContentContainer.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        ${createStatCardHtml('briefcase', 'Projects Completed', `${completedProjects.length} / ${projectsInPeriod.length}`, `in this period`)}
+                        ${createStatCardHtml('check-square', 'Tasks Completed', `${completedTasks.length} / ${tasksInPeriod.length}`, `in this period`)}
+                        ${createStatCardHtml('user-check', 'IDPs Completed', `${completedIdps.length} / ${idpInPeriod.length}`, `in this period`)}
+                        ${createStatCardHtml('star', 'Avg. Project Rating', avgRating.avg.toFixed(1), `from ${avgRating.count} projects`)}
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+            
+            function showReportModal(memberId) {
+                currentReportMemberId = memberId;
+                const member = teamDataState.members.find(m => m.id == memberId);
+                if (!member) return;
+                reportModalTitle.textContent = `Performance Report for ${member.name}`;
+                generateAndRenderReport();
+                reportModal.classList.remove('pointer-events-none', 'opacity-0');
+                reportModalContent.classList.remove('-translate-y-10');
+            }
+
+
+            function setupTheme() {
+                const savedTheme = localStorage.getItem('dashboard-theme') || 'aqua';
+                document.body.dataset.theme = savedTheme;
+                updateActiveThemeButton(savedTheme);
+                themeSwitcher.addEventListener('click', e => {
+                    const button = e.target.closest('.theme-button');
+                    if(button) {
+                        const theme = button.dataset.theme;
+                        document.body.dataset.theme = theme;
+                        localStorage.setItem('dashboard-theme', theme);
+                        updateActiveThemeButton(theme);
+                    }
+                });
+            }
+            function updateActiveThemeButton(activeTheme) { document.querySelectorAll('.theme-button').forEach(btn => btn.classList.toggle('active', btn.dataset.theme === activeTheme)); }
+            
+            main();
+        });
     </script>
 </body>
 </html>
