@@ -11,10 +11,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
     <!-- 
         Chosen Palette: Calm & Professional
-        Application Structure Plan: This SPA is designed as a top-down narrative journey. It begins with a high-level "What & Why" to establish context, moves into the "How It Works" mechanics, then presents the "Global Impact" via an interactive dashboard. It follows with the "Business Value" and "Certification Journey" for practical application, and concludes with inspirational "Real-World Examples" and a "Future Outlook". This thematic flow is more engaging than a linear slide-by-slide structure, allowing users to digest complex information in logical, self-contained sections.
+        Application Structure Plan: This SPA is designed as a top-down narrative journey. It begins with a high-level "What & Why" to establish context, moves into the "How It Works" mechanics, then presents the "Global Impact" via an interactive dashboard. It follows with the "Business Value" and "Certification Journey" for practical application, and concludes with inspirational "Real-World Examples" and a "Future Outlook". This thematic flow is more engaging than a linear slide-by-slide structure, allowing users to digest complex information in logical, self-contained sections. The addition of expandable menus for project types enhances exploration within the "How It Works" section.
         Visualization & Content Choices:
         - Big Numbers (e.g., 40% CO2): Goal: Inform -> Method: Large Text -> Justification: High-impact, immediate communication of key stats.
         - Certification Levels: Goal: Organize -> Method: HTML/CSS Pyramid -> Justification: Visually represents hierarchy better than a simple list, no SVG needed.
+        - LEED Rating Systems by Project Type (New): Goal: Organize/Inform -> Method: HTML/CSS Expandable Menu (Accordion) -> Interaction: Click to expand/collapse -> Justification: Allows users to explore specific rating systems and their applicable project types on demand, enhancing information density without cluttering the page.
         - Top Regions: Goal: Compare -> Method: Chart.js Bar Chart -> Justification: Ideal for comparing distinct categories.
         - Industry Impact: Goal: Compare -> Method: Chart.js Radar Chart -> Justification: Excellent for showing multi-variable impact across different sectors in one view.
         - Process Flow: Goal: Organize -> Method: HTML/CSS Diagram -> Justification: Clear, sequential visualization of the certification journey without Mermaid/SVG.
@@ -68,6 +69,28 @@
         }
         .pyramid-level:hover {
             transform: scale(1.05);
+        }
+        .expandable-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: #E2F0FF;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #004AAD;
+        }
+        .expandable-content {
+            padding-left: 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .expandable-content.expanded {
+            max-height: 500px; /* Sufficiently large to accommodate content */
+            transition: max-height 0.5s ease-in;
         }
     </style>
 </head>
@@ -123,7 +146,7 @@
         <section id="how-it-works" class="py-16">
             <h2 class="text-4xl font-black text-center text-gray-800 mb-4">How It Works: The LEED Framework</h2>
             <p class="max-w-3xl mx-auto text-lg text-center text-gray-600 mb-12">LEED certification is based on a points system. Projects earn points by adhering to prerequisites and credits across several key categories. The total points achieved determines which of the four certification levels the project receives.</p>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-12">
                 <div>
                     <h3 class="text-2xl font-bold text-blue-600 mb-6">Key Credit Categories</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -142,6 +165,81 @@
                         <div class="pyramid-level w-11/12 h-20 flex items-center justify-center font-bold text-white bg-gradient-to-r from-amber-400 to-yellow-400 shadow-lg"><p>GOLD (60-79 Points)</p></div>
                         <div class="pyramid-level w-10/12 h-20 flex items-center justify-center font-bold text-white bg-gradient-to-r from-gray-500 to-gray-400 shadow-md"><p>SILVER (50-59 Points)</p></div>
                         <div class="pyramid-level w-9/12 h-20 flex items-center justify-center font-bold text-white bg-gradient-to-r from-green-600 to-green-500 shadow-sm"><p>CERTIFIED (40-49 Points)</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-bold text-blue-600 text-center mb-6 mt-12">LEED Rating Systems by Project Type</h3>
+            <p class="max-w-3xl mx-auto text-lg text-center text-gray-600 mb-8">LEED offers various rating systems tailored to different building and project types. Expand each category to see applicable project types.</p>
+            
+            <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6">
+                <div class="mb-4">
+                    <div class="expandable-header" data-target="bdc">
+                        Building Design and Construction (BD+C) <span class="arrow">▼</span>
+                    </div>
+                    <div id="bdc" class="expandable-content">
+                        <ul class="list-disc list-inside text-gray-700 py-2">
+                            <li>New Construction</li>
+                            <li>Core and Shell</li>
+                            <li>Schools</li>
+                            <li>Retail</li>
+                            <li>Healthcare</li>
+                            <li>Data Centers</li>
+                            <li>Warehouses & Distribution Centers</li>
+                            <li>Hospitality</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="expandable-header" data-target="idc">
+                        Interior Design and Construction (ID+C) <span class="arrow">▼</span>
+                    </div>
+                    <div id="idc" class="expandable-content">
+                        <ul class="list-disc list-inside text-gray-700 py-2">
+                            <li>Commercial Interiors</li>
+                            <li>Retail</li>
+                            <li>Hospitality</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="expandable-header" data-target="om">
+                        Operations and Maintenance (O+M) <span class="arrow">▼</span>
+                    </div>
+                    <div id="om" class="expandable-content">
+                        <ul class="list-disc list-inside text-gray-700 py-2">
+                            <li>Existing Buildings</li>
+                            <li>Schools</li>
+                            <li>Retail</li>
+                            <li>Hospitality</li>
+                            <li>Warehouses & Distribution Centers</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="expandable-header" data-target="nd">
+                        Neighborhood Development (ND) <span class="arrow">▼</span>
+                    </div>
+                    <div id="nd" class="expandable-content">
+                        <ul class="list-disc list-inside text-gray-700 py-2">
+                            <li>Plan</li>
+                            <li>Built Project</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="expandable-header" data-target="homes">
+                        Homes <span class="arrow">▼</span>
+                    </div>
+                    <div id="homes" class="expandable-content">
+                        <ul class="list-disc list-inside text-gray-700 py-2">
+                            <li>Homes and Multifamily Lowrise</li>
+                            <li>Multifamily Midrise</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -311,6 +409,22 @@
             },
             plugins: { ...chartTooltipConfig.plugins, legend: { position: 'top' } }
         }
+    });
+
+    document.querySelectorAll('.expandable-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const targetId = header.dataset.target;
+            const content = document.getElementById(targetId);
+            const arrow = header.querySelector('.arrow');
+
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                arrow.textContent = '▼';
+            } else {
+                content.classList.add('expanded');
+                arrow.textContent = '▲';
+            }
+        });
     });
 </script>
 </body>
