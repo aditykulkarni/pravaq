@@ -3,844 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Team Management Dashboard (Offline)</title>
+    <title>LEED Interactive Report: The Future of Building</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- 
+        Chosen Palette: Calm & Professional
+        Application Structure Plan: This SPA is designed as a top-down narrative journey. It begins with a high-level "What & Why" to establish context, moves into the "How It Works" mechanics, then presents the "Global Impact" via an interactive dashboard. It follows with the "Business Value" and "Certification Journey" for practical application, and concludes with inspirational "Real-World Examples" and a "Future Outlook". This thematic flow is more engaging than a linear slide-by-slide structure, allowing users to digest complex information in logical, self-contained sections.
+        Visualization & Content Choices:
+        - Big Numbers (e.g., 40% CO2): Goal: Inform -> Method: Large Text -> Justification: High-impact, immediate communication of key stats.
+        - Certification Levels: Goal: Organize -> Method: HTML/CSS Pyramid -> Justification: Visually represents hierarchy better than a simple list, no SVG needed.
+        - Top Regions: Goal: Compare -> Method: Chart.js Bar Chart -> Justification: Ideal for comparing distinct categories.
+        - Industry Impact: Goal: Compare -> Method: Chart.js Radar Chart -> Justification: Excellent for showing multi-variable impact across different sectors in one view.
+        - Process Flow: Goal: Organize -> Method: HTML/CSS Diagram -> Justification: Clear, sequential visualization of the certification journey without Mermaid/SVG.
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA;
+            color: #212529;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 1024px) {
+            .chart-container {
+                height: 400px;
             }
         }
-    </script>
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-    <style>
-        /* Custom styles for the Liquid Glass UI with improved contrast */
-        :root, [data-theme="aqua"] {
-            --bg-gradient: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
-            --glass-bg: rgba(255, 255, 255, 0.45);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --text-primary: #0f172a; /* slate-900 */
-            --text-secondary: #334155; /* slate-700 */
-            --text-muted: #64748b; /* slate-500 */
-            --interactive-accent: #4f46e5; /* indigo-600 */
-            --interactive-accent-hover: #4338ca; /* indigo-700 */
-            --button-primary-bg: #3b82f6; /* blue-500 */
-            --button-primary-hover: #2563eb; /* blue-600 */
-            --star-active: #facc15; /* yellow-400 */
-            --star-inactive: #94a3b8; /* slate-400 */
+        .hero-bg {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://placehold.co/1920x1080/4F5D75/FFFFFF?text=Sustainable+Architecture');
+            background-size: cover;
+            background-position: center;
         }
-        [data-theme="sunset"] {
-            --bg-gradient: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
-            --glass-bg: rgba(255, 255, 255, 0.35);
-            --text-primary: #44403c; /* stone-700 */
-            --text-secondary: #57534e; /* stone-600 */
-            --text-muted: #78716c; /* stone-500 */
-            --interactive-accent: #f97316; /* orange-500 */
-            --interactive-accent-hover: #ea580c; /* orange-600 */
-            --button-primary-bg: #f97316;
-            --button-primary-hover: #ea580c;
-            --star-active: #f59e0b;
-            --star-inactive: #a8a29e;
+        .nav-link {
+            transition: color 0.3s;
+            cursor: pointer;
         }
-        [data-theme="forest"] {
-            --bg-gradient: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
-            --glass-bg: rgba(255, 255, 255, 0.4);
-            --text-primary: #14532d; /* green-900 */
-            --text-secondary: #166534; /* green-800 */
-            --text-muted: #15803d; /* green-700 */
-            --interactive-accent: #16a34a; /* green-600 */
-            --interactive-accent-hover: #15803d; /* green-700 */
-            --button-primary-bg: #16a34a;
-            --button-primary-hover: #15803d;
-            --star-active: #fde047;
-            --star-inactive: #4d7c0f;
+        .nav-link:hover {
+            color: #007BFF;
         }
-        [data-theme="oceanic"] {
-            --bg-gradient: linear-gradient(120deg, #00c6ff 0%, #0072ff 100%);
-            --glass-bg: rgba(255, 255, 255, 0.15);
-            --text-primary: #f8fafc; /* slate-50 */
-            --text-secondary: #e2e8f0; /* slate-200 */
-            --text-muted: #94a3b8; /* slate-400 */
-            --interactive-accent: #60a5fa; /* blue-400 */
-            --interactive-accent-hover: #93c5fd; /* blue-300 */
-            --button-primary-bg: #60a5fa;
-            --button-primary-hover: #93c5fd;
-            --star-active: #fde047;
-            --star-inactive: #7dd3fc;
+        .stat-card {
+            border-left: 4px solid #007BFF;
         }
-
-        body {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            color: var(--text-primary);
+        .flow-step {
+            transition: transform 0.3s, box-shadow 0.3s;
         }
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 1rem;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+        .flow-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        .modal { transition: opacity 0.25s ease; }
-        .modal-content { transition: transform 0.25s ease; }
-        .number-input { -moz-appearance: textfield; }
-        .number-input::-webkit-outer-spin-button, .number-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        .theme-button { width: 24px; height: 24px; border-radius: 9999px; border: 2px solid transparent; cursor: pointer; transition: border-color 0.2s ease; }
-        .theme-button.active { border-color: var(--text-primary); }
-        .star-rating svg { transition: color 0.2s ease-in-out, transform 0.1s ease-in-out; }
-        .star-rating svg:hover { transform: scale(1.2); }
-        .editable-field {
-            background: transparent;
-            border: 1px solid transparent;
-            border-radius: 0.25rem;
-            padding: 0.125rem 0.25rem;
-            transition: all 0.2s ease-in-out;
+        .pyramid-level {
+            clip-path: polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);
+            transition: transform 0.3s;
         }
-        .editable-field:hover, .editable-field:focus {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.3);
+        .pyramid-level:hover {
+            transform: scale(1.05);
         }
     </style>
 </head>
-<body>
+<body class="antialiased">
 
-    <div id="loading-spinner" class="flex items-center justify-center h-screen">
-        <div class="text-center">
-            <svg class="animate-spin h-12 w-12 text-slate-800 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <p class="mt-4 text-lg font-semibold">Loading Dashboard...</p>
-        </div>
-    </div>
-
-    <div id="app-container" class="hidden min-h-screen font-sans p-4 sm:p-6 lg:p-8">
-        <div class="max-w-screen-xl mx-auto">
-            <header class="mb-8 flex justify-between items-start flex-wrap gap-4">
-                 <div>
-                    <h1 id="team-name" class="text-4xl font-bold" style="color: var(--text-primary);"></h1>
-                    <p class="text-lg" style="color: var(--text-secondary);">Offline-capable project, performance, and development tracker.</p>
-                </div>
-                <div class="flex items-center gap-4">
-                     <!-- Data Management -->
-                    <div class="flex items-center gap-2 p-1 glass-card">
-                         <button id="import-json-btn" class="inline-flex items-center px-3 py-2 font-semibold rounded-lg hover:bg-white/30 focus:outline-none transition-colors text-sm">
-                            <i data-lucide="upload" class="w-4 h-4 mr-2"></i> Import
-                        </button>
-                        <button id="export-json-btn" class="inline-flex items-center px-3 py-2 font-semibold rounded-lg hover:bg-white/30 focus:outline-none transition-colors text-sm">
-                            <i data-lucide="download" class="w-4 h-4 mr-2"></i> Export
-                        </button>
-                        <input type="file" id="json-file-input" class="hidden" accept=".json">
-                    </div>
-                     <!-- Theme Switcher -->
-                    <div id="theme-switcher" class="flex items-center gap-2 p-2 glass-card">
-                        <button class="theme-button" data-theme="aqua" style="background: linear-gradient(120deg, #89f7fe, #66a6ff);"></button>
-                        <button class="theme-button" data-theme="sunset" style="background: linear-gradient(120deg, #f6d365, #fda085);"></button>
-                        <button class="theme-button" data-theme="forest" style="background: linear-gradient(120deg, #d4fc79, #96e6a1);"></button>
-                        <button class="theme-button" data-theme="oceanic" style="background: linear-gradient(120deg, #00c6ff, #0072ff);"></button>
-                    </div>
-                    <button id="add-member-btn" class="glass-card inline-flex items-center px-4 py-2 font-semibold rounded-lg shadow-md hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent transition-colors">
-                        <i data-lucide="user-plus" class="w-5 h-5 mr-2"></i>
-                        Add Team Member
-                    </button>
-                </div>
-            </header>
-
-            <section id="dashboard-stats-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"></section>
-            <main>
-                <div id="members-grid" class="grid grid-cols-1 xl:grid-cols-2 gap-8"></div>
-                <div id="no-members-message" class="hidden text-center py-16 glass-card">
-                    <h2 class="text-2xl font-semibold" style="color: var(--text-primary);">Your dashboard is empty.</h2>
-                    <p class="mt-2" style="color: var(--text-secondary);">Click "Add Team Member" to get started.</p>
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <!-- Modal for adding items -->
-    <div id="modal" class="modal fixed inset-0 bg-black/50 z-50 flex justify-center items-center pointer-events-none opacity-0">
-        <div id="modal-content" class="modal-content glass-card p-6 w-full max-w-md transform -translate-y-10">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="modal-title" class="text-xl font-bold" style="color: var(--text-primary);"></h3>
-                <button id="modal-close-btn" class="hover:text-slate-900" style="color: var(--text-secondary);">
-                     <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
+    <header class="hero-bg sticky top-0 z-50 shadow-md backdrop-blur-sm bg-white/80">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center text-white">
+            <h1 class="text-xl font-bold">LEED Interactive Report</h1>
+            <div class="hidden md:flex space-x-6 font-medium">
+                <a href="#what-is-leed" class="nav-link hover:text-blue-300">What & Why</a>
+                <a href="#how-it-works" class="nav-link hover:text-blue-300">How It Works</a>
+                <a href="#impact-dashboard" class="nav-link hover:text-blue-300">Impact</a>
+                <a href="#business-value" class="nav-link hover:text-blue-300">Value</a>
+                <a href="#examples" class="nav-link hover:text-blue-300">Examples</a>
             </div>
-            <form id="modal-form" class="space-y-4">
-                 <div id="modal-inputs-container"></div>
-                <div class="mt-4 flex justify-end gap-2">
-                    <button type="button" id="modal-cancel-btn" class="px-4 py-2 bg-black/10 rounded-md hover:bg-black/20" style="color: var(--text-primary);">Cancel</button>
-                    <button type="submit" class="px-4 py-2 text-white font-semibold rounded-md" style="background-color: var(--button-primary-bg);">Add</button>
-                </div>
-            </form>
-        </div>
-    </div>
+        </nav>
+    </header>
 
-    <!-- Confirmation Modal -->
-    <div id="confirm-modal" class="modal fixed inset-0 bg-black/60 z-50 flex justify-center items-center pointer-events-none opacity-0">
-        <div id="confirm-modal-content" class="modal-content glass-card p-6 w-full max-w-sm transform -translate-y-10 text-center">
-            <h3 id="confirm-title" class="text-xl font-bold" style="color: var(--text-primary);"></h3>
-            <p id="confirm-text" class="my-4" style="color: var(--text-secondary);"></p>
-            <div class="mt-6 flex justify-center gap-4">
-                <button type="button" id="confirm-cancel-btn" class="px-6 py-2 bg-black/10 rounded-lg hover:bg-black/20 font-semibold" style="color: var(--text-primary);">Cancel</button>
-                <button type="button" id="confirm-action-btn" class="px-6 py-2 text-white font-semibold rounded-lg bg-red-600 hover:bg-red-700">Confirm</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Schedule Chart Modal -->
-    <div id="schedule-modal" class="modal fixed inset-0 bg-black/60 z-50 flex justify-center items-center pointer-events-none opacity-0">
-        <div id="schedule-modal-content" class="modal-content glass-card p-4 sm:p-6 w-full max-w-4xl transform -translate-y-10 flex flex-col" style="height: 80vh;">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="schedule-modal-title" class="text-xl font-bold" style="color: var(--text-primary);">Task Schedule</h3>
-                <button id="schedule-modal-close-btn" class="hover:text-slate-900" style="color: var(--text-secondary);"><i data-lucide="x" class="w-6 h-6"></i></button>
-            </div>
-            <div class="flex-grow bg-black/5 rounded-lg p-2 relative">
-                <canvas id="schedule-chart-canvas"></canvas>
-                 <div id="schedule-empty-message" class="hidden text-center py-16 absolute inset-0 flex items-center justify-center">
-                    <div>
-                        <h2 class="text-xl font-semibold" style="color: var(--text-primary);">No Tasks with Dates</h2>
-                        <p class="mt-2" style="color: var(--text-secondary);">Add tasks with both start and end dates to see the schedule chart.</p>
+    <main class="container mx-auto p-6 md:p-12">
+
+        <section id="what-is-leed" class="py-16 text-center">
+            <h2 class="text-4xl font-black text-gray-800 mb-4">What is LEED and Why Does It Matter?</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-12">This section introduces the core concept of LEED (Leadership in Energy and Environmental Design) and presents the critical environmental challenges it aims to solve. It's the world's most recognized framework for creating healthy, efficient, and cost-saving green buildings.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="bg-white p-8 rounded-xl shadow-lg text-left">
+                    <h3 class="text-2xl font-bold text-blue-600 mb-4">The Problem: A Building's Footprint</h3>
+                    <p class="text-gray-700 mb-6">Buildings are one of the largest contributors to global carbon emissions and resource consumption. Traditional construction and operation methods present significant environmental and health challenges.</p>
+                    <div class="space-y-4">
+                        <p class="text-xl font-semibold flex items-center"><span class="text-3xl mr-3">🏭</span> ~40% of global CO₂ emissions</p>
+                        <p class="text-xl font-semibold flex items-center"><span class="text-3xl mr-3">💸</span> Significant energy and water waste</p>
+                        <p class="text-xl font-semibold flex items-center"><span class="text-3xl mr-3">😷</span> Poor indoor air quality impacts health</p>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Report Modal -->
-    <div id="report-modal" class="modal fixed inset-0 bg-black/60 z-50 flex justify-center items-center pointer-events-none opacity-0">
-        <div id="report-modal-content" class="modal-content glass-card p-4 sm:p-6 w-full max-w-4xl transform -translate-y-10 flex flex-col" style="height: 80vh;">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="report-modal-title" class="text-xl font-bold" style="color: var(--text-primary);">Performance Report</h3>
-                <button id="report-modal-close-btn" class="hover:text-slate-900" style="color: var(--text-secondary);"><i data-lucide="x" class="w-6 h-6"></i></button>
-            </div>
-            <div class="flex gap-4 mb-4">
-                <select id="report-timeframe" class="bg-white/50 border border-transparent rounded-md p-2">
-                    <option value="monthly">Monthly</option>
-                    <option value="quarterly">Quarterly</option>
-                </select>
-                <select id="report-year" class="bg-white/50 border border-transparent rounded-md p-2"></select>
-                <select id="report-period" class="bg-white/50 border border-transparent rounded-md p-2"></select>
-            </div>
-            <div id="report-content-container" class="flex-grow overflow-auto bg-black/5 rounded-lg p-4"></div>
-        </div>
-    </div>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/lucide@0.320.0/dist/umd/lucide.min.js"></script>
-
-    <script>
-        window.addEventListener('load', () => {
-            let teamDataState = null, scheduleChart = null;
-            let currentModal = { type: null, memberId: null, projectId: null };
-            let confirmCallback = null;
-            let currentReportMemberId = null;
-
-            const el = (id) => document.getElementById(id);
-            const loadingSpinner = el('loading-spinner'), appContainer = el('app-container'),
-                membersGrid = el('members-grid'), noMembersMessage = el('no-members-message'),
-                teamNameEl = el('team-name'), dashboardStatsGrid = el('dashboard-stats-grid'),
-                themeSwitcher = el('theme-switcher'), modal = el('modal'), modalContent = el('modal-content'),
-                modalTitle = el('modal-title'), modalInputsContainer = el('modal-inputs-container'),
-                modalForm = el('modal-form'), modalCloseBtn = el('modal-close-btn'),
-                modalCancelBtn = el('modal-cancel-btn'), confirmModal = el('confirm-modal'),
-                confirmModalContent = el('confirm-modal-content'), confirmTitle = el('confirm-title'), 
-                confirmText = el('confirm-text'), confirmActionBtn = el('confirm-action-btn'),
-                confirmCancelBtn = el('confirm-cancel-btn'), scheduleModal = el('schedule-modal'),
-                scheduleModalContent = el('schedule-modal-content'), scheduleModalTitle = el('schedule-modal-title'),
-                scheduleModalCloseBtn = el('schedule-modal-close-btn'), scheduleChartCanvas = el('schedule-chart-canvas'),
-                scheduleEmptyMessage = el('schedule-empty-message'), importJsonBtn = el('import-json-btn'),
-                exportJsonBtn = el('export-json-btn'), jsonFileInput = el('json-file-input'),
-                reportModal = el('report-modal'), reportModalContent = el('report-modal-content'), 
-                reportModalTitle = el('report-modal-title'), reportModalCloseBtn = el('report-modal-close-btn'),
-                reportTimeframeSelect = el('report-timeframe'), reportYearSelect = el('report-year'),
-                reportPeriodSelect = el('report-period'), reportContentContainer = el('report-content-container');
-
-            
-            const LEADERSHIP_TRAITS = ['Communication', 'Decision Making', 'Problem Solving', 'Adaptability', 'Mentorship', 'Initiative', 'Accountability'];
-
-            // --- Local Storage Data Management ---
-            const APP_STORAGE_KEY = 'teamPulseDashboardState';
-
-            function getInitialState() {
-                return {
-                    teamName: "EDU Team Dashboard",
-                    members: []
-                };
-            }
-
-            function loadStateFromLocalStorage() {
-                const savedState = localStorage.getItem(APP_STORAGE_KEY);
-                if (savedState) {
-                    let state = JSON.parse(savedState);
-                    // Migration for backward compatibility
-                    if (state.members) {
-                        state.members.forEach(member => {
-                            if (member.trainings && !member.idpItems) {
-                                member.idpItems = member.trainings.map(t => ({
-                                    id: t.id, competency: '', topic: t.name,
-                                    plannedHrs: t.duration, actualHrs: '', startDate: '', endDate: '',
-                                    status: t.status, trainer: '', comments: ''
-                                }));
-                                delete member.trainings;
-                            }
-                             (member.projects || []).forEach(p => {
-                                (p.tasks || []).forEach(t => { if(t.comments === undefined) t.comments = ''; });
-                                if (p.evaluatedTraits) {
-                                    p.traitsShown = [...p.evaluatedTraits];
-                                    delete p.evaluatedTraits;
-                                }
-                                if (!p.traitsShown) p.traitsShown = [];
-                                if (!p.traitsMissing) p.traitsMissing = [];
-                            });
-                        });
-                    }
-                    return state;
-                }
-                const initialState = getInitialState();
-                localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(initialState));
-                return initialState;
-            }
-
-            function saveStateToLocalStorage() {
-                localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(teamDataState));
-            }
-            
-            // --- Main Application Logic ---
-            function main() {
-                setupTheme();
-                teamDataState = loadStateFromLocalStorage();
-                renderApp();
-                loadingSpinner.style.display = 'none';
-                appContainer.classList.remove('hidden');
-                setupReportFilters();
-            }
-
-            function renderApp() {
-                if (!teamDataState) return;
-                teamNameEl.textContent = teamDataState.teamName;
-                renderDashboardStats();
-                noMembersMessage.classList.toggle('hidden', teamDataState.members.length > 0);
-                membersGrid.innerHTML = teamDataState.members.map(createMemberCard).join('');
-                if (typeof lucide !== 'undefined') lucide.createIcons();
-            }
-
-            const isProjectComplete = project => (project.tasks?.length > 0 && project.tasks.every(t => t.status === 'Done'));
-
-            const calculateActiveMemberWorkload = member => (member.projects || []).reduce((total, p) => {
-                const projectIsDone = isProjectComplete(p);
-                const projectWorkload = projectIsDone ? 0 : parseFloat(p.workload) || 0;
-                const tasksWorkload = (p.tasks || []).reduce((taskTotal, task) => {
-                    return task.status !== 'Done' ? taskTotal + (parseFloat(task.workload) || 0) : taskTotal;
-                }, 0);
-                return total + projectWorkload + tasksWorkload;
-            }, 0);
-            
-            function calculateMemberAverageRating(member) {
-                const ratedProjects = (member.projects || []).filter(p => p.rating && p.rating > 0);
-                if (ratedProjects.length === 0) return { avg: 0, count: 0 };
-                const totalRating = ratedProjects.reduce((sum, p) => sum + p.rating, 0);
-                return {
-                    avg: totalRating / ratedProjects.length,
-                    count: ratedProjects.length
-                };
-            }
-
-            function renderDashboardStats() {
-                const members = teamDataState.members;
-                const allIdpItems = members.flatMap(m => m.idpItems || []);
-                const completedIdpItems = allIdpItems.filter(t => t?.status === 'Done').length;
-                const totalProjects = members.reduce((sum, m) => sum + (m.projects?.length || 0), 0);
-                const totalActiveWorkloadSum = members.reduce((sum, m) => sum + calculateActiveMemberWorkload(m), 0);
-                const overallUtilization = members.length > 0 ? (totalActiveWorkloadSum / members.length).toFixed(0) : 0;
-                dashboardStatsGrid.innerHTML = `
-                    ${createStatCardHtml('users', 'Team Members', members.length, 'Active collaborators')}
-                    ${createStatCardHtml('award', 'IDP Completion', allIdpItems.length > 0 ? `${Math.round((completedIdpItems/allIdpItems.length)*100)}%` : '0%', `${completedIdpItems} / ${allIdpItems.length} items`)}
-                    ${createStatCardHtml('briefcase', 'Active Projects', totalProjects, 'Across the team')}
-                    ${createStatCardHtml('pie-chart', 'Active Utilization', `${overallUtilization}%`, 'Based on unfinished tasks')}
-                `;
-            }
-            const createStatCardHtml = (icon, title, value, subtext) => `<div class="glass-card p-6 flex items-center space-x-4"><div class="p-3 bg-black/10 rounded-full"><i data-lucide="${icon}" class="w-6 h-6" style="color: var(--text-primary);"></i></div><div><p class="text-sm" style="color: var(--text-secondary);">${title}</p><p class="text-2xl font-bold" style="color: var(--text-primary);">${value}</p><p class="text-xs" style="color: var(--text-muted);">${subtext}</p></div></div>`;
-            
-            function createMemberCard(member) {
-                const memberWorkload = calculateActiveMemberWorkload(member);
-                const workloadColor = memberWorkload > 100 ? 'bg-red-500' : memberWorkload > 85 ? 'bg-yellow-500' : 'bg-green-500';
-                const ratingInfo = calculateMemberAverageRating(member);
-
-                return `
-                <div class="glass-card p-6 flex flex-col gap-6">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <input type="text" value="${member.name}" class="editable-field member-detail-input text-xl font-bold w-full" data-field="name" data-member-id="${member.id}" style="color: var(--text-primary);" />
-                                ${ratingInfo.count > 0 ? `<div class="flex items-center gap-1 text-sm font-bold" style="color: var(--star-active);" title="Avg. rating from ${ratingInfo.count} projects"><i data-lucide="star" class="w-4 h-4 fill-current"></i> ${ratingInfo.avg.toFixed(1)}</div>` : ''}
-                            </div>
-                             <input type="text" value="${member.role}" class="editable-field member-detail-input text-sm font-medium w-full" data-field="role" data-member-id="${member.id}" style="color: var(--interactive-accent);" />
+                <div class="bg-blue-600 text-white p-8 rounded-xl shadow-lg text-left">
+                    <h3 class="text-2xl font-bold mb-4">The Solution: The LEED Standard</h3>
+                     <p class="text-blue-100 mb-6">LEED provides a roadmap for measuring and improving performance, rewarding projects that reduce their environmental impact. The results are significant, creating a positive ripple effect on our planet and economy.</p>
+                     <div class="space-y-4">
+                        <div class="stat-card bg-blue-700 p-4 rounded-lg">
+                            <p class="text-3xl font-bold">25% Less Energy</p>
+                            <p class="text-blue-200">consumed on average by LEED-certified buildings.</p>
                         </div>
-                        <button class="delete-member-btn hover:text-red-500" data-member-id="${member.id}" style="color: var(--text-muted);"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-1 text-sm"><span class="font-medium" style="color: var(--text-secondary);">Active Workload</span><span class="font-bold" style="color: var(--text-primary);">${memberWorkload.toFixed(0)}%</span></div>
-                        <div class="w-full bg-black/10 rounded-full h-2.5"><div class="${workloadColor} h-2.5 rounded-full transition-all duration-500" style="width: ${Math.min(memberWorkload, 100)}%"></div></div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between items-center mb-2"><h4 class="font-semibold flex items-center" style="color: var(--text-primary);"><i data-lucide="briefcase" class="w-5 h-5 mr-2" style="color: var(--text-secondary);"></i>Assigned Projects</h4><button class="add-project-btn" data-member-id="${member.id}" style="color: var(--interactive-accent);"><i data-lucide="plus-circle" class="w-5 h-5"></i></button></div>
-                        <div class="space-y-4 project-list">${(member.projects || []).map(p => createProjectHtml(p, member.id)).join('') || `<p class="text-xs italic" style="color: var(--text-muted);">No projects assigned.</p>`}</div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between items-center mb-2"><h4 class="font-semibold flex items-center" style="color: var(--text-primary);"><i data-lucide="user-check" class="w-5 h-5 mr-2" style="color: var(--text-secondary);"></i>Individual Development Plan</h4><button class="add-idp-btn" data-member-id="${member.id}" style="color: var(--interactive-accent);"><i data-lucide="plus-circle" class="w-5 h-5"></i></button></div>
-                        <div class="space-y-3 idp-list">${(member.idpItems || []).map(t => createIdpItemHtml(t, member.id)).join('') || `<p class="text-xs italic" style="color: var(--text-muted);">No IDP items logged.</p>`}</div>
-                    </div>
-                    <div class="mt-2 grid grid-cols-2 gap-4">
-                        <button class="view-schedule-btn w-full glass-card inline-flex items-center justify-center px-4 py-2 font-semibold rounded-lg shadow-md hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-white/50" data-member-id="${member.id}"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i> Schedule</button>
-                        <button class="view-report-btn w-full glass-card inline-flex items-center justify-center px-4 py-2 font-semibold rounded-lg shadow-md hover:bg-white/60 focus:outline-none focus:ring-2 focus:ring-white/50" data-member-id="${member.id}"><i data-lucide="clipboard-list" class="w-5 h-5 mr-2"></i> Report</button>
-                    </div>
-                </div>`;
-            }
-
-            function createProjectHtml(proj, memberId) {
-                const projectIsDone = isProjectComplete(proj);
-                const priorityColors = { High: 'bg-red-500/20 text-red-800', Medium: 'bg-yellow-500/20 text-yellow-800', Low: 'bg-blue-500/20 text-blue-800' };
-                const traitsShown = proj.traitsShown || [];
-                const traitsMissing = proj.traitsMissing || [];
-
-                return `<div class="p-4 rounded-lg bg-black/5 border border-black/10 project-container">
-                    <div class="flex justify-between items-center gap-2 flex-wrap">
-                        <h5 class="font-bold flex-grow" style="color: var(--text-primary);">${proj.name}</h5>
-                        <select class="priority-select text-xs font-bold px-2 py-1 rounded-md border-transparent focus:ring-2 focus:ring-indigo-400 ${priorityColors[proj.priority || 'Medium']}" data-project-id="${proj.id}" data-member-id="${memberId}">
-                            <option value="Low" ${proj.priority === 'Low' ? 'selected' : ''}>Low</option>
-                            <option value="Medium" ${!proj.priority || proj.priority === 'Medium' ? 'selected' : ''}>Medium</option>
-                            <option value="High" ${proj.priority === 'High' ? 'selected' : ''}>High</option>
-                        </select>
-                        <div class="flex items-center gap-1"><input type="number" placeholder="%" value="${proj.workload || ''}" class="number-input project-workload-input w-12 text-center font-semibold bg-white/50 border border-transparent rounded focus:outline-none focus:ring-2 focus:ring-indigo-400" data-project-id="${proj.id}" data-member-id="${memberId}"></div>
-                        <div class="flex items-center gap-2 ml-1"><button class="add-task-btn" data-project-id="${proj.id}" data-member-id="${memberId}" style="color: var(--interactive-accent);"><i data-lucide="plus" class="w-5 h-5"></i></button></div>
-                    </div>
-                    <div class="mt-3 text-xs grid grid-cols-2 gap-4" style="color: var(--text-muted);">
-                        <label class="flex items-center gap-1">Start: <input type="date" value="${proj.startDate || ''}" class="project-date-input bg-transparent rounded px-1 w-full" data-date-type="startDate" data-project-id="${proj.id}" data-member-id="${memberId}"></label>
-                        <label class="flex items-center gap-1">End: <input type="date" value="${proj.endDate || ''}" class="project-date-input bg-transparent rounded px-1 w-full" data-date-type="endDate" data-project-id="${proj.id}" data-member-id="${memberId}"></label>
-                    </div>
-                    <div class="mt-2 space-y-2 task-list">${(proj.tasks || []).map(t => createTaskHtml(t, proj.id, memberId)).join('') || `<p class="text-xs italic mt-2" style="color: var(--text-muted);">No tasks yet.</p>`}</div>
-                    <div class="mt-3 border-t border-black/10 pt-3 ${projectIsDone ? '' : 'hidden'}">
-                        <div class="flex justify-between items-center mb-2">
-                           <h6 class="text-sm font-semibold" style="color: var(--text-secondary);">Project Rating</h6>
-                           <div class="star-rating flex items-center" data-project-id="${proj.id}" data-member-id="${memberId}">
-                                ${[1,2,3,4,5].map(i => `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer" data-rating-value="${i}" style="color: ${i <= (proj.rating || 0) ? 'var(--star-active)' : 'var(--star-inactive)'}; ${i <= (proj.rating || 0) ? 'fill: var(--star-active);' : ''}"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`).join('')}
-                           </div>
+                         <div class="stat-card bg-blue-700 p-4 rounded-lg">
+                            <p class="text-3xl font-bold">11% Less Water</p>
+                            <p class="text-blue-200">consumed on average by LEED-certified buildings.</p>
                         </div>
-                         <div class="mb-3 grid grid-cols-2 gap-4">
-                            <div>
-                                <h6 class="text-sm font-semibold mb-2" style="color: var(--text-secondary);">Traits Shown</h6>
-                                <div class="space-y-1 text-xs">
-                                    ${LEADERSHIP_TRAITS.map(trait => `
-                                        <label class="flex items-center gap-2">
-                                            <input type="checkbox" class="trait-checkbox rounded" data-trait-type="shown" data-trait-name="${trait}" data-project-id="${proj.id}" data-member-id="${memberId}" ${traitsShown.includes(trait) ? 'checked' : ''}>
-                                            ${trait}
-                                        </label>
-                                    `).join('')}
-                                </div>
-                            </div>
-                             <div>
-                                <h6 class="text-sm font-semibold mb-2" style="color: var(--text-secondary);">Traits Missing</h6>
-                                <div class="space-y-1 text-xs">
-                                    ${LEADERSHIP_TRAITS.map(trait => `
-                                        <label class="flex items-center gap-2">
-                                            <input type="checkbox" class="trait-checkbox rounded" data-trait-type="missing" data-trait-name="${trait}" data-project-id="${proj.id}" data-member-id="${memberId}" ${traitsMissing.includes(trait) ? 'checked' : ''}>
-                                            ${trait}
-                                        </label>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        </div>
-                        <textarea class="project-comments-textarea w-full text-sm bg-white/50 border border-transparent rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" placeholder="Add project comments..." data-project-id="${proj.id}" data-member-id="${memberId}">${proj.comments || ''}</textarea>
                     </div>
-                </div>`;
-            }
+                </div>
+            </div>
+        </section>
 
-            function createTaskHtml(task, projectId, memberId) {
-                const statusClasses = { 'To Do': 'bg-gray-400/50 text-gray-800', 'In Progress': 'bg-blue-400/50 text-blue-800', 'Done': 'bg-green-400/50 text-green-800' };
-                const nextStatus = { 'To Do': 'In Progress', 'In Progress': 'Done', 'Done': 'To Do' };
-                return `<div class="p-3 rounded-md bg-white/50 border border-black/10 mt-2">
-                    <div class="flex justify-between items-center gap-2">
-                        <p class="flex-grow text-sm" style="color: var(--text-secondary);">${task.text}</p>
-                        <input type="number" placeholder="%" value="${task.workload || ''}" class="number-input task-workload-input w-12 text-center bg-white/80 border border-transparent rounded focus:outline-none focus:ring-1 focus:ring-indigo-400" data-task-id="${task.id}" data-project-id="${projectId}" data-member-id="${memberId}">
-                        <button class="change-status-btn text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap ${statusClasses[task.status]}" data-next-status="${nextStatus[task.status]}" data-task-id="${task.id}" data-project-id="${projectId}" data-member-id="${memberId}">${task.status}</button>
+        <hr class="my-16 border-gray-200">
+
+        <section id="how-it-works" class="py-16">
+            <h2 class="text-4xl font-black text-center text-gray-800 mb-4">How It Works: The LEED Framework</h2>
+            <p class="max-w-3xl mx-auto text-lg text-center text-gray-600 mb-12">LEED certification is based on a points system. Projects earn points by adhering to prerequisites and credits across several key categories. The total points achieved determines which of the four certification levels the project receives.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-2xl font-bold text-blue-600 mb-6">Key Credit Categories</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="bg-white p-4 rounded-lg shadow-sm"><strong>⚡ Energy & Atmosphere</strong></div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm"><strong>💧 Water Efficiency</strong></div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm"><strong>🌳 Sustainable Sites</strong></div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm"><strong>♻️ Materials & Resources</strong></div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm"><strong>🌬️ Indoor Environmental Quality</strong></div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm"><strong>💡 Innovation & Regional Priority</strong></div>
                     </div>
-                    <div class="mt-2 text-xs flex justify-between gap-2" style="color: var(--text-muted);">
-                        <label class="flex items-center gap-1 text-xs">Start: <input type="date" value="${task.startDate || ''}" class="task-date-input bg-transparent rounded px-1" data-date-type="startDate" data-task-id="${task.id}" data-project-id="${projectId}" data-member-id="${memberId}"></label>
-                        <label class="flex items-center gap-1 text-xs">End: <input type="date" value="${task.endDate || ''}" class="task-date-input bg-transparent rounded px-1" data-date-type="endDate" data-task-id="${task.id}" data-project-id="${projectId}" data-member-id="${memberId}"></label>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-blue-600 mb-6 text-center lg:text-left">Certification Levels</h3>
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="pyramid-level w-full h-20 flex items-center justify-center font-bold text-white bg-gradient-to-r from-yellow-500 to-amber-500 shadow-xl"><p>PLATINUM (80+ Points)</p></div>
+                        <div class="pyramid-level w-11/12 h-20 flex items-center justify-center font-bold text-white bg-gradient-to-r from-amber-400 to-yellow-400 shadow-lg"><p>GOLD (60-79 Points)</p></div>
+                        <div class="pyramid-level w-10/12 h-20 flex items-center justify-center font-bold text-white bg-gradient-to-r from-gray-500 to-gray-400 shadow-md"><p>SILVER (50-59 Points)</p></div>
+                        <div class="pyramid-level w-9/12 h-20 flex items-center justify-center font-bold text-white bg-gradient-to-r from-green-600 to-green-500 shadow-sm"><p>CERTIFIED (40-49 Points)</p></div>
                     </div>
-                    <textarea class="task-comments-textarea mt-2 w-full text-xs bg-white/50 border border-transparent rounded p-2 focus:outline-none focus:ring-1 focus:ring-indigo-400" placeholder="Add task comments..." data-task-id="${task.id}" data-project-id="${projectId}" data-member-id="${memberId}">${task.comments || ''}</textarea>
-                </div>`;
-            }
-            
-            function createIdpItemHtml(item, memberId) {
-                return `<div class="p-4 rounded-lg bg-black/5 border border-black/10 idp-item-container">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                        <label class="font-semibold col-span-full">Topic: <input type="text" value="${item.topic || ''}" class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20" data-field="topic" data-idp-id="${item.id}" data-member-id="${memberId}"></label>
-                        <label class="font-semibold">Competency: <input type="text" value="${item.competency || ''}" class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20" data-field="competency" data-idp-id="${item.id}" data-member-id="${memberId}"></label>
-                        <label class="font-semibold">Trainer: <input type="text" value="${item.trainer || ''}" class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20" data-field="trainer" data-idp-id="${item.id}" data-member-id="${memberId}"></label>
-                        <label class="font-semibold">Planned Hrs: <input type="number" value="${item.plannedHrs || ''}" class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20" data-field="plannedHrs" data-idp-id="${item.id}" data-member-id="${memberId}"></label>
-                        <label class="font-semibold">Actual Hrs: <input type="number" value="${item.actualHrs || ''}" class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20" data-field="actualHrs" data-idp-id="${item.id}" data-member-id="${memberId}"></label>
-                        <label class="font-semibold">Start: <input type="date" value="${item.startDate || ''}" class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20" data-field="startDate" data-idp-id="${item.id}" data-member-id="${memberId}"></label>
-                        <label class="font-semibold">End: <input type="date" value="${item.endDate || ''}" class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20" data-field="endDate" data-idp-id="${item.id}" data-member-id="${memberId}"></label>
-                        <div class="col-span-full"><label class="font-semibold">Status: <select class="idp-status-select bg-transparent rounded px-1 w-full" data-idp-id="${item.id}" data-member-id="${memberId}">${['Assigned', 'In Progress', 'Done'].map(s => `<option value="${s}" ${item.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label></div>
-                        <div class="col-span-full"><label class="font-semibold">Comments: <textarea class="idp-detail-input font-normal w-full bg-transparent border-b border-black/20 text-xs" data-field="comments" data-idp-id="${item.id}" data-member-id="${memberId}">${item.comments || ''}</textarea></label></div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="my-16 border-gray-200">
+
+        <section id="impact-dashboard" class="py-16">
+            <h2 class="text-4xl font-black text-center text-gray-800 mb-4">Global Impact Dashboard</h2>
+            <p class="max-w-3xl mx-auto text-lg text-center text-gray-600 mb-12">With over 100,000 certified projects globally, LEED's influence is vast. This dashboard visualizes where LEED is most prevalent and which industries are leading the charge in sustainable building practices.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold text-blue-600 mb-2">Top Regions for LEED</h3>
+                    <p class="text-gray-600 mb-4">This chart shows the leading regions by the number of certified projects, highlighting the global adoption of the standard.</p>
+                    <div class="chart-container">
+                        <canvas id="topRegionsChart"></canvas>
                     </div>
-                </div>`;
-            }
-
-
-            function handleGenericUpdate(updateFn) {
-                if (!teamDataState) return;
-                teamDataState = updateFn(teamDataState);
-                saveStateToLocalStorage();
-                renderApp();
-            }
-            
-            function handleDeleteMember(button) {
-                const memberIdToDelete = Number(button.dataset.memberId);
-                showConfirmModal(
-                    'Delete Member?',
-                    'Are you sure you want to delete this team member and all their data? This action cannot be undone.',
-                    'Delete',
-                    () => {
-                        handleGenericUpdate(d => {
-                            d.members = d.members.filter(m => m.id !== memberIdToDelete);
-                            return d;
-                        });
-                    }
-                );
-            }
-
-            document.body.addEventListener('click', e => {
-                const button = e.target.closest('button');
-                const star = e.target.closest('.star-rating svg');
-                if (button) {
-                    if (button.matches('#add-member-btn')) { showModal('member'); return; }
-                    if (button.matches('.delete-member-btn')) { handleDeleteMember(button); return; }
-                    if (button.matches('.view-schedule-btn')) { renderScheduleChart(button.dataset.memberId); return; }
-                    if (button.matches('.view-report-btn')) { showReportModal(button.dataset.memberId); return; }
-                    const { memberId, projectId } = button.dataset;
-                    if (button.matches('.add-project-btn')) showModal('project', memberId);
-                    if (button.matches('.add-idp-btn')) showModal('idp', memberId);
-                    if (button.matches('.add-task-btn')) showModal('task', memberId, projectId);
-                    if (button.matches('.change-status-btn')) handleStatusChange(button);
-                }
-                if (star) {
-                    handleRatingChange(star);
-                }
-            });
-
-            document.body.addEventListener('change', e => { 
-                if (e.target.matches('.idp-status-select')) handleIdpStatusChange(e.target); 
-                if (e.target.matches('.priority-select')) handlePriorityChange(e.target);
-                if (e.target.matches('.trait-checkbox')) handleTraitChange(e.target);
-            });
-            document.body.addEventListener('blur', e => {
-                const { target } = e;
-                if (target.matches('.project-workload-input')) handleProjectWorkloadChange(target);
-                if (target.matches('.task-workload-input')) handleTaskWorkloadChange(target);
-                if (target.matches('.idp-detail-input')) handleIdpDetailChange(target);
-                if (target.matches('.project-date-input')) handleProjectDateChange(target);
-                if (target.matches('.task-date-input')) handleTaskDateChange(target);
-                if (target.matches('.project-comments-textarea')) handleCommentsChange(target);
-                 if (target.matches('.task-comments-textarea')) handleTaskCommentsChange(target);
-                if (target.matches('.member-detail-input')) handleMemberDetailChange(target);
-            }, true);
-            
-            const getNumericValue = (input) => (v => isNaN(v) ? '' : v)(parseFloat(input.value));
-            const handleProjectWorkloadChange = i => handleGenericUpdate(d => { const p = d.members.find(m=>m.id==i.dataset.memberId)?.projects.find(p=>p.id==i.dataset.projectId); if(p) p.workload = getNumericValue(i); return d; });
-            const handleTaskWorkloadChange = i => handleGenericUpdate(d => { const t = d.members.find(m=>m.id==i.dataset.memberId)?.projects.find(p=>p.id==i.dataset.projectId)?.tasks.find(t=>t.id==i.dataset.taskId); if(t) t.workload = getNumericValue(i); return d; });
-            const handleIdpStatusChange = s => handleGenericUpdate(d => { const item = d.members.find(m=>m.id==s.dataset.memberId)?.idpItems.find(item=>item.id==s.dataset.idpId); if(item) item.status = s.value; return d; });
-            const handleProjectDateChange = i => handleGenericUpdate(d => { const p = d.members.find(m=>m.id==i.dataset.memberId)?.projects.find(p=>p.id==i.dataset.projectId); if(p) p[i.dataset.dateType] = i.value; return d; });
-            const handleTaskDateChange = i => handleGenericUpdate(d => { const t = d.members.find(m=>m.id==i.dataset.memberId)?.projects.find(p=>p.id==i.dataset.projectId)?.tasks.find(t=>t.id==i.dataset.taskId); if(t) t[i.dataset.dateType] = i.value; return d; });
-            const handleStatusChange = b => handleGenericUpdate(d => { const t = d.members.find(m=>m.id==b.dataset.memberId)?.projects.find(p=>p.id==b.dataset.projectId)?.tasks.find(t=>t.id==b.dataset.taskId); if(t) t.status = b.dataset.nextStatus; return d; });
-            const handlePriorityChange = s => handleGenericUpdate(d => { const p = d.members.find(m => m.id == s.dataset.memberId)?.projects.find(p => p.id == s.dataset.projectId); if (p) p.priority = s.value; return d; });
-            const handleRatingChange = s => handleGenericUpdate(d => { const p = d.members.find(m => m.id == s.parentElement.dataset.memberId)?.projects.find(p => p.id == s.parentElement.dataset.projectId); if (p) p.rating = Number(s.dataset.ratingValue); return d; });
-            const handleCommentsChange = t => handleGenericUpdate(d => { const p = d.members.find(m => m.id == t.dataset.memberId)?.projects.find(p => p.id == t.dataset.projectId); if (p) p.comments = t.value; return d; });
-            const handleTaskCommentsChange = t => handleGenericUpdate(d => { const task = d.members.find(m=>m.id==t.dataset.memberId)?.projects.find(p=>p.id==t.dataset.projectId)?.tasks.find(task=>task.id==t.dataset.taskId); if (task) task.comments = t.value; return d; });
-            const handleTraitChange = c => handleGenericUpdate(d => {
-                const p = d.members.find(m => m.id == c.dataset.memberId)?.projects.find(p => p.id == c.dataset.projectId);
-                if (p) {
-                    const traitType = c.dataset.traitType === 'shown' ? 'traitsShown' : 'traitsMissing';
-                    const otherTraitType = c.dataset.traitType === 'shown' ? 'traitsMissing' : 'traitsShown';
-                    p[traitType] = p[traitType] || [];
-                    p[otherTraitType] = p[otherTraitType] || [];
-
-                    const traitName = c.dataset.traitName;
-                    
-                    if (c.checked) {
-                        if (!p[traitType].includes(traitName)) p[traitType].push(traitName);
-                        // A trait cannot be both shown and missing
-                        p[otherTraitType] = p[otherTraitType].filter(t => t !== traitName);
-                    } else {
-                        p[traitType] = p[traitType].filter(t => t !== traitName);
-                    }
-                }
-                return d;
-            });
-            const handleMemberDetailChange = i => handleGenericUpdate(d => {
-                const member = d.members.find(m => m.id == i.dataset.memberId);
-                if(member) member[i.dataset.field] = i.value;
-                return d;
-            });
-             const handleIdpDetailChange = i => handleGenericUpdate(d => {
-                const item = d.members.find(m => m.id == i.dataset.memberId)?.idpItems.find(item => item.id == i.dataset.idpId);
-                if(item) item[i.dataset.field] = i.value;
-                return d;
-            });
-
-            function showModal(type, memberId = null, projectId = null) {
-                currentModal = { type, memberId, projectId };
-                let inputsHtml = '';
-                if (type === 'member') {
-                    modalTitle.textContent = 'Add New Member';
-                    inputsHtml = `<input type="text" id="modal-member-name" placeholder="Member Name" required class="w-full px-3 py-2 border border-black/20 bg-white/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-500">
-                                  <input type="text" id="modal-member-role" placeholder="Member Role" required class="w-full px-3 py-2 border border-black/20 bg-white/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 placeholder-slate-500">`;
-                } else if (type === 'project' || type === 'task') {
-                    modalTitle.textContent = `Add New ${type === 'project' ? 'Project' : 'Task'}`;
-                    inputsHtml = `<input type="text" id="modal-item-name" placeholder="${type === 'project' ? 'Project' : 'Task'} Name" required class="w-full px-3 py-2 border border-black/20 bg-white/50 rounded-md">
-                                  <div class="grid grid-cols-2 gap-4"><label>Start Date <input type="date" id="modal-start-date" class="w-full mt-1 px-3 py-2 border border-black/20 bg-white/50 rounded-md"></label><label>End Date <input type="date" id="modal-end-date" class="w-full mt-1 px-3 py-2 border border-black/20 bg-white/50 rounded-md"></label></div>`;
-                } else if (type === 'idp') {
-                    modalTitle.textContent = 'Add IDP Item';
-                    inputsHtml = `<input type="text" id="modal-idp-topic" placeholder="Topic / Goal" required class="w-full px-3 py-2 border border-black/20 bg-white/50 rounded-md">
-                                  <input type="text" id="modal-idp-competency" placeholder="Competency" class="w-full px-3 py-2 border border-black/20 bg-white/50 rounded-md">
-                                  <input type="text" id="modal-idp-trainer" placeholder="Trainer" class="w-full px-3 py-2 border border-black/20 bg-white/50 rounded-md">
-                                  <input type="number" id="modal-idp-plannedHrs" placeholder="Planned Hours" class="w-full px-3 py-2 border border-black/20 bg-white/50 rounded-md">
-                                  `;
-                }
-                modalInputsContainer.innerHTML = inputsHtml;
-                modal.classList.remove('pointer-events-none', 'opacity-0');
-                modalContent.classList.remove('-translate-y-10');
-                modalInputsContainer.querySelector('input')?.focus();
-            }
-
-            function hideModal() { modal.classList.add('pointer-events-none', 'opacity-0'); modalContent.classList.add('-translate-y-10'); }
-            function showConfirmModal(title, text, actionText, onConfirm) {
-                confirmTitle.textContent = title;
-                confirmText.textContent = text;
-                confirmActionBtn.textContent = actionText;
-                confirmCallback = onConfirm;
-                confirmModal.classList.remove('pointer-events-none', 'opacity-0'); 
-                confirmModalContent.classList.remove('-translate-y-10'); 
-            }
-            function hideConfirmModal() { 
-                confirmModal.classList.add('pointer-events-none', 'opacity-0'); 
-                confirmModalContent.classList.add('-translate-y-10');
-                confirmCallback = null; 
-            }
-
-            modalForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const { type, memberId, projectId } = currentModal;
-                handleGenericUpdate(d => {
-                    if (type === 'member') {
-                        const name = el('modal-member-name').value.trim();
-                        const role = el('modal-member-role').value.trim();
-                        if (name && role) d.members.push({ id: Date.now(), name, role, projects: [], idpItems: [] });
-                    } else if (type === 'idp') {
-                        const member = d.members.find(m => m.id == memberId);
-                        if (member) {
-                            if (!member.idpItems) member.idpItems = [];
-                            member.idpItems.push({
-                                id: Date.now(),
-                                topic: el('modal-idp-topic').value,
-                                competency: el('modal-idp-competency').value,
-                                plannedHrs: el('modal-idp-plannedHrs').value,
-                                trainer: el('modal-idp-trainer').value,
-                                actualHrs: '', startDate: '', endDate: '', status: 'Assigned', comments: ''
-                            });
-                        }
-                    } else {
-                         const name = el('modal-item-name').value.trim(); if (!name) return d;
-                        const startDate = el('modal-start-date')?.value, endDate = el('modal-end-date')?.value;
-                        if (type === 'project') d.members.find(m => m.id == memberId)?.projects.push({ id: Date.now(), name, workload: '', tasks: [], startDate, endDate, priority: 'Medium', rating: 0, comments: '', traitsShown: [], traitsMissing: [] });
-                        if (type === 'task') d.members.find(m => m.id == memberId)?.projects.find(p => p.id == projectId)?.tasks.push({ id: Date.now(), text: name, status: 'To Do', workload: '', startDate, endDate, comments: '' });
-                    }
-                    return d;
-                });
-                hideModal();
-            });
-            
-            modalCloseBtn.addEventListener('click', hideModal);
-            modalCancelBtn.addEventListener('click', hideConfirmModal);
-            confirmActionBtn.addEventListener('click', () => {
-                if (confirmCallback) confirmCallback();
-                hideConfirmModal();
-            });
-
-            // --- JSON Import/Export ---
-            exportJsonBtn.addEventListener('click', () => {
-                const dataStr = JSON.stringify(teamDataState, null, 2);
-                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-                const exportFileDefaultName = 'dashboard-backup.json';
-                const linkElement = document.createElement('a');
-                linkElement.setAttribute('href', dataUri);
-                linkElement.setAttribute('download', exportFileDefaultName);
-                linkElement.click();
-            });
-
-            importJsonBtn.addEventListener('click', () => jsonFileInput.click());
-            jsonFileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0]; if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    try {
-                        const importedState = JSON.parse(event.target.result);
-                        showConfirmModal('Import Data?','This will overwrite all current dashboard data. Are you sure?','Import',() => {
-                            teamDataState = importedState;
-                            saveStateToLocalStorage();
-                            renderApp();
-                        });
-                    } catch (error) { alert('Error: Invalid JSON file.'); }
-                };
-                reader.readAsText(file);
-                e.target.value = null; 
-            });
-
-            // --- Schedule Modal ---
-            scheduleModalCloseBtn.addEventListener('click', () => { scheduleModal.classList.add('pointer-events-none', 'opacity-0'); scheduleModalContent.classList.add('-translate-y-10'); });
-
-            function renderScheduleChart(memberId) {
-                const member = teamDataState.members.find(m => m.id == memberId); if (!member) return;
-                scheduleModalTitle.textContent = `Task Schedule for ${member.name}`;
-                const tasksForChart = (member.projects || []).flatMap(p => (p.tasks || []).map(t => ({...t, projectName: p.name}))).filter(t => t.startDate && t.endDate);
-                scheduleEmptyMessage.classList.toggle('hidden', tasksForChart.length > 0);
-                if (scheduleChart) scheduleChart.destroy();
-                if (tasksForChart.length > 0) {
-                    const oneDay = 24*60*60*1000;
-                    const labels = tasksForChart.map(t => `${t.text} (${t.projectName})`);
-                    const data = tasksForChart.map(t => Math.round(Math.abs((new Date(t.startDate) - new Date(t.endDate)) / oneDay)) + 1);
-                    const statusColors = { 'To Do': 'rgba(156, 163, 175, 0.7)', 'In Progress': 'rgba(96, 165, 250, 0.7)', 'Done': 'rgba(74, 222, 128, 0.7)' };
-                    const backgroundColors = tasksForChart.map(t => statusColors[t.status] || 'rgba(203, 213, 225, 0.7)');
-                    scheduleChart = new Chart(scheduleChartCanvas, {
-                        type: 'bar',
-                        data: { labels, datasets: [{ label: 'Task Duration (days)', data, backgroundColor: backgroundColors, borderColor: backgroundColors.map(c => c.replace('0.7', '1')), borderWidth: 1 }] },
-                        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true, title: { display: true, text: 'Duration in Days' } }, y: { ticks: { font: { size: 10 } } } }, plugins: { legend: { display: false } } }
-                    });
-                }
-                scheduleModal.classList.remove('pointer-events-none', 'opacity-0');
-                scheduleModalContent.classList.remove('-translate-y-10');
-            }
-            
-            // --- Report Modal ---
-            reportModalCloseBtn.addEventListener('click', () => { reportModal.classList.add('pointer-events-none', 'opacity-0'); reportModalContent.classList.add('-translate-y-10'); });
-            
-            function setupReportFilters() {
-                 const currentYear = new Date().getFullYear();
-                 for (let i = currentYear - 5; i <= currentYear + 5; i++) {
-                     const option = document.createElement('option');
-                     option.value = i;
-                     option.textContent = i;
-                     if(i === currentYear) option.selected = true;
-                     reportYearSelect.appendChild(option);
-                 }
-                 updateReportPeriodFilter();
-                 reportTimeframeSelect.addEventListener('change', updateReportPeriodFilter);
-                 reportYearSelect.addEventListener('change', generateAndRenderReport);
-                 reportPeriodSelect.addEventListener('change', generateAndRenderReport);
-            }
-
-            function updateReportPeriodFilter() {
-                reportPeriodSelect.innerHTML = '';
-                const timeframe = reportTimeframeSelect.value;
-                if(timeframe === 'monthly') {
-                    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-                    months.forEach((month, index) => {
-                        const option = document.createElement('option');
-                        option.value = index;
-                        option.textContent = month;
-                        if(index === new Date().getMonth()) option.selected = true;
-                        reportPeriodSelect.appendChild(option);
-                    });
-                } else { // quarterly
-                    ['Q1', 'Q2', 'Q3', 'Q4'].forEach((q, index) => {
-                        const option = document.createElement('option');
-                        option.value = index;
-                        option.textContent = q;
-                         if(index === Math.floor(new Date().getMonth() / 3)) option.selected = true;
-                        reportPeriodSelect.appendChild(option);
-                    });
-                }
-                generateAndRenderReport();
-            }
-
-            function generateAndRenderReport() {
-                if (!currentReportMemberId) return;
-                const member = teamDataState.members.find(m => m.id == currentReportMemberId);
-                if (!member) return;
-
-                const year = parseInt(reportYearSelect.value);
-                const period = parseInt(reportPeriodSelect.value);
-                const timeframe = reportTimeframeSelect.value;
-
-                let startDate, endDate;
-                if (timeframe === 'monthly') {
-                    startDate = new Date(year, period, 1);
-                    endDate = new Date(year, period + 1, 0);
-                } else { // quarterly
-                    startDate = new Date(year, period * 3, 1);
-                    endDate = new Date(year, period * 3 + 3, 0);
-                }
-
-                const projectsInPeriod = (member.projects || []).filter(p => p.endDate && new Date(p.endDate) >= startDate && new Date(p.endDate) <= endDate);
-                const tasksInPeriod = (member.projects || []).flatMap(p => p.tasks || []).filter(t => t.endDate && new Date(t.endDate) >= startDate && new Date(t.endDate) <= endDate);
-                const idpInPeriod = (member.idpItems || []).filter(i => i.endDate && new Date(i.endDate) >= startDate && new Date(i.endDate) <= endDate);
-
-                const completedProjects = projectsInPeriod.filter(isProjectComplete);
-                const completedTasks = tasksInPeriod.filter(t => t.status === 'Done');
-                const completedIdps = idpInPeriod.filter(i => i.status === 'Done');
-
-                const avgRating = calculateMemberAverageRating({ projects: completedProjects });
-
-                reportContentContainer.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        ${createStatCardHtml('briefcase', 'Projects Completed', `${completedProjects.length} / ${projectsInPeriod.length}`, `in this period`)}
-                        ${createStatCardHtml('check-square', 'Tasks Completed', `${completedTasks.length} / ${tasksInPeriod.length}`, `in this period`)}
-                        ${createStatCardHtml('user-check', 'IDPs Completed', `${completedIdps.length} / ${idpInPeriod.length}`, `in this period`)}
-                        ${createStatCardHtml('star', 'Avg. Project Rating', avgRating.avg.toFixed(1), `from ${avgRating.count} projects`)}
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold text-blue-600 mb-2">Impact Across Industries</h3>
+                    <p class="text-gray-600 mb-4">LEED is adopted across various sectors. This radar chart illustrates the relative impact and adoption level in key industries.</p>
+                    <div class="chart-container">
+                        <canvas id="industryImpactChart"></canvas>
                     </div>
-                `;
-                lucide.createIcons();
-            }
-            
-            function showReportModal(memberId) {
-                currentReportMemberId = memberId;
-                const member = teamDataState.members.find(m => m.id == memberId);
-                if (!member) return;
-                reportModalTitle.textContent = `Performance Report for ${member.name}`;
-                generateAndRenderReport();
-                reportModal.classList.remove('pointer-events-none', 'opacity-0');
-                reportModalContent.classList.remove('-translate-y-10');
-            }
+                </div>
+            </div>
+        </section>
+        
+        <hr class="my-16 border-gray-200">
 
+        <section id="business-value" class="py-16">
+            <h2 class="text-4xl font-black text-center text-gray-800 mb-4">The Tangible Business Value</h2>
+            <p class="max-w-3xl mx-auto text-lg text-center text-gray-600 mb-12">Adopting LEED is not just an environmental decision; it's a strategic business move. Certification delivers clear financial and brand benefits that enhance an organization's bottom line and public image.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-lg text-center flow-step">
+                    <p class="text-5xl mb-4">💰</p><h4 class="text-xl font-bold text-blue-600 mb-2">Lower Operating Costs</h4><p>Energy and water savings can reduce utility costs by up to 30%.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg text-center flow-step">
+                    <p class="text-5xl mb-4">📈</p><h4 class="text-xl font-bold text-blue-600 mb-2">Higher Property Value</h4><p>LEED buildings attract higher rents and sale prices.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg text-center flow-step">
+                    <p class="text-5xl mb-4">🏆</p><h4 class="text-xl font-bold text-blue-600 mb-2">Brand Leadership</h4><p>Signals a strong commitment to ESG and corporate responsibility.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg text-center flow-step">
+                    <p class="text-5xl mb-4">💡</p><h4 class="text-xl font-bold text-blue-600 mb-2">Future-Proofing</h4><p>Helps organizations stay ahead of environmental regulations.</p>
+                </div>
+            </div>
+        </section>
 
-            function setupTheme() {
-                const savedTheme = localStorage.getItem('dashboard-theme') || 'aqua';
-                document.body.dataset.theme = savedTheme;
-                updateActiveThemeButton(savedTheme);
-                themeSwitcher.addEventListener('click', e => {
-                    const button = e.target.closest('.theme-button');
-                    if(button) {
-                        const theme = button.dataset.theme;
-                        document.body.dataset.theme = theme;
-                        localStorage.setItem('dashboard-theme', theme);
-                        updateActiveThemeButton(theme);
-                    }
-                });
-            }
-            function updateActiveThemeButton(activeTheme) { document.querySelectorAll('.theme-button').forEach(btn => btn.classList.toggle('active', btn.dataset.theme === activeTheme)); }
-            
-            main();
+        <hr class="my-16 border-gray-200">
+        
+        <section id="examples" class="py-16">
+            <h2 class="text-4xl font-black text-center text-gray-800 mb-4">LEED in Action: Inspiring Examples</h2>
+            <p class="max-w-3xl mx-auto text-lg text-center text-gray-600 mb-12">From iconic skyscrapers to innovative corporate campuses, LEED certification has been successfully implemented in some of the world's most famous buildings, proving its scalability and impact.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden flow-step">
+                    <img src="https://placehold.co/600x400/778DA9/FFFFFF?text=Empire+State+Building" alt="Empire State Building" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h4 class="text-xl font-bold text-blue-600">Empire State Building</h4>
+                        <p class="text-gray-600 mt-2">A landmark retrofit project achieving LEED Gold, saving $4.4M annually through a 38% reduction in energy use.</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden flow-step">
+                    <img src="https://placehold.co/600x400/415A77/FFFFFF?text=Changi+Airport+T4" alt="Changi Airport Terminal 4" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h4 class="text-xl font-bold text-blue-600">Changi Airport T4</h4>
+                        <p class="text-gray-600 mt-2">LEED Gold certified for its use of natural ventilation and lighting, enhancing passenger comfort while reducing costs.</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden flow-step">
+                    <img src="https://placehold.co/600x400/1B263B/FFFFFF?text=Infosys+Campus" alt="Infosys Campus" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h4 class="text-xl font-bold text-blue-600">Infosys Campuses</h4>
+                        <p class="text-gray-600 mt-2">Achieved LEED Platinum with smart systems that cut energy use by 40% and water consumption by 60%.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="container mx-auto px-6 py-12 text-center">
+             <h3 class="text-3xl font-bold mb-4">Build a Better Future</h3>
+             <p class="text-gray-300 max-w-2xl mx-auto">LEED is more than a standard; it's a movement towards a more sustainable, resilient, and healthy built environment for all.</p>
+             <p class="mt-8 text-sm text-gray-400">&copy; 2025 LEED Interactive Application. All data is for illustrative purposes.</p>
+        </div>
+    </footer>
+
+<script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
         });
-    </script>
+    });
+
+    const chartTooltipConfig = {
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    title: function(tooltipItems) {
+                        const item = tooltipItems[0];
+                        let label = item.chart.data.labels[item.dataIndex];
+                        return Array.isArray(label) ? label.join(' ') : label;
+                    }
+                }
+            }
+        }
+    };
+
+    const topRegionsCtx = document.getElementById('topRegionsChart').getContext('2d');
+    new Chart(topRegionsCtx, {
+        type: 'bar',
+        data: {
+            labels: ['USA', 'China', 'India', 'Europe', 'UAE'],
+            datasets: [{
+                label: 'Certified Projects',
+                data: [45000, 22000, 15000, 12000, 8000],
+                backgroundColor: 'rgba(0, 123, 255, 0.7)',
+                borderColor: 'rgba(0, 123, 255, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            scales: {
+                x: { beginAtZero: true, grid: { color: '#e9ecef'} },
+                y: { grid: { display: false } }
+            },
+            plugins: { ...chartTooltipConfig.plugins, legend: { display: false } }
+        }
+    });
+
+    const industryImpactCtx = document.getElementById('industryImpactChart').getContext('2d');
+    new Chart(industryImpactCtx, {
+        type: 'radar',
+        data: {
+            labels: ['Construction', 'Urban Design', 'Manufacturing', 'Healthcare', 'Retail'],
+            datasets: [{
+                label: 'LEED Adoption & Impact Level',
+                data: [9, 8, 7, 8, 7],
+                backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                borderColor: 'rgba(0, 123, 255, 1)',
+                pointBackgroundColor: 'rgba(0, 123, 255, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(0, 123, 255, 1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    angleLines: { color: '#dee2e6' },
+                    grid: { color: '#dee2e6' },
+                    pointLabels: { font: { size: 14 } },
+                    ticks: { backdropColor: '#F8F9FA', stepSize: 2 },
+                    suggestedMin: 0,
+                    suggestedMax: 10
+                }
+            },
+            plugins: { ...chartTooltipConfig.plugins, legend: { position: 'top' } }
+        }
+    });
+</script>
 </body>
 </html>
